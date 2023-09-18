@@ -5,18 +5,33 @@ import CardOverflow from '@mui/joy/CardOverflow';
 import Link from '@mui/joy/Link';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { useEffect, useState } from 'react';
-import { Container, Grid, createTheme } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Select, { selectClasses } from '@mui/joy/Select';
-import Option from '@mui/joy/Option';
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
-
-const defaultTheme = createTheme();
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function ProductCard() {
+  // const [state, dispatch] = useContext(CartContext);
+  const [search, setSearch] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
+  const location = useLocation();
   useEffect(() => {
-    fetch('https://localhost:44373/Product')
+    const categoryId = search.get("categoryId");
+    const keyword = search.get("keyword");
+    console.log(keyword)
+    let params = ''
+    let url = 'https://localhost:44373/ProductCategory';
+    // 檢查是否有 categoryId 參數
+    if (categoryId) {
+      params += `?categoryId=${categoryId}`;
+    }
+    // 檢查是否有 keyword 參數
+    if (params !== '' && keyword) {
+      // 如果已经有查巡參數，使用 '&' 连接
+      params += `&keyword=${keyword}`;
+    } else if (keyword) {
+      params += `?keyword=${keyword}`;
+    }
+    fetch(url + params)
       .then(response => response.json())
       .then(data => {
         // 處理返回的商品列表
@@ -24,9 +39,10 @@ export default function ProductCard() {
         setProducts(data);
       })
       .catch(error => {
-        console.error('發稱錯誤:', error);
+        console.error('發生錯誤:', error);
       });
-  }, []);
+  }, [location]);
+
   console.log("p", products)
   interface Product {
     productId: number;
@@ -36,10 +52,54 @@ export default function ProductCard() {
     productPrice: number;
   }
 
-  return (
+  const [selectedQuantities, setSelectedQuantities] = useState([]);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false); 
+  const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
+  
+  const handleAddToCart = async (product: Product) => {
+    try {
+        if (userId != null) {
+            const cartItem = new FormData();
+            cartItem.append('userId', userId);
+            cartItem.append('productId', product.productId.toString()); 
+            cartItem.append('quantity', '1'); // 如果quantity也是数字，可以直接传递数字
+            cartItem.append('productName', product.productName.toString()); // 如果quantity也是数字，可以直接传递数字
+            cartItem.append('productPrice', product.productPrice.toString())
 
+            const response = await fetch('https://localhost:44373/CartMember/add', {
+                method: 'POST',
+                body: cartItem,
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    setSnackbarMessage(`成功將 ${product.productName} 添加到購物車`);
+                    setSnackbarOpen(true);
+                } else {
+                    setSnackbarMessage(`加入購物車失敗: ${result.errorMessage}`);
+                    setSnackbarOpen(true);
+                }
+            } else {
+                throw new Error('网络请求失败');
+            }
+        } else {
+            alert('請先登錄以添加產品到購物車。');
+            navigate('/login');
+        }
+    } catch (error : any) {
+        setSnackbarMessage(`加入購物車失敗: ${error.message}`);
+        setSnackbarOpen(true);
+    }
+};
+
+  return (
+    //與上方的距離
     <Container sx={{ py: 4 }} maxWidth="md">
       {/* End hero unit */}
+      {/* 每個項目上下左右間距 */}
       <Grid container spacing={8}>
         {products.map((product) => (
           <Grid item key={product.productId} xs={12} sm={6} md={4}>
@@ -65,7 +125,7 @@ export default function ProductCard() {
               <CardContent>
                 {/* <Typography level="body-xs">{product.productName}</Typography> */}
                 <Link
-                  href="#product-card"
+                  href={`/Demo/ProductProfile?productId=${product.productId}`}
                   fontWeight="md"
                   color="neutral"
                   textColor="text.primary"
@@ -74,44 +134,13 @@ export default function ProductCard() {
                 >
                   {product.productName}
                 </Link>
-
-                {/* <Typography
-          level="title-lg"
-          sx={{ mt: 1, fontWeight: 'xl' }}
-          endDecorator={
-            <Chip component="span" size="sm" variant="soft" color="success">
-              最低價格
-            </Chip>
-          }
-        >
-           ${product.productPrice}
-        </Typography>
-        <Typography level="body-sm">
-          (Only <b>7</b> left in stock!)
-        </Typography> */}
                 <br />
-                <Select
-                  placeholder="Select a pet…"
-                  indicator={<KeyboardArrowDown />}
-                  sx={{
-                    width: 100,
-                    [`& .${selectClasses.indicator}`]: {
-                      transition: '0.2s',
-                      [`&.${selectClasses.expanded}`]: {
-                        transform: 'rotate(-180deg)',
-                      },
-                    },
-                  }}
-                >
-                  {[...Array(20)].map((_, i) => {
-                    return (
-                      <Option value={i + 1} key={i}>{i + 1}</Option>
-                    )
-                  })}
-                </Select>
+                ${product.productPrice}
+                <br />
               </CardContent>
               <CardOverflow>
-                <Button variant="solid" color="primary" size="lg" >
+                <Button variant="solid" color="primary" size="lg"
+                onClick={() => handleAddToCart(product)}>
                   {<ShoppingCartIcon />} 加入購物車
                 </Button>
               </CardOverflow>

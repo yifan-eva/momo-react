@@ -2,7 +2,8 @@ import { InputBase } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
-
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 //搜尋欄
 const Search = styled('div')(({ theme }) => ({
@@ -46,11 +47,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function ProductSearch() {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('')
-    const handleSearch = () => {
-        console.log('Searching for:', searchTerm);
-        // 處理搜索操作，可以調用後端 API 來執行實際搜索
+    const handleSearch = async () => {
+        try {
+            // 向后端 API 发送搜索请求
+            navigate(`ProductCategory?keyword=${searchTerm}`)
+        } catch (error) {
+            console.error('發生錯誤:', error);
+        }
     };
+
     return (
         <>
             <Search>
@@ -73,12 +80,12 @@ export default function ProductSearch() {
                 style={{ cursor: 'pointer' }}
                 role="button"
                 tabIndex={0}
-                // onKeyPress={(e) => {
-                //     if (e.key === 'Enter') {
-                //         handleSearch();
-                //     }
-                // }} 
-                />
+            // onKeyPress={(e) => {
+            //     if (e.key === 'Enter') {
+            //         handleSearch();
+            //     }
+            // }} 
+            />
         </>
     )
 };

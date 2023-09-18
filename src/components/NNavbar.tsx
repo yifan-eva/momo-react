@@ -1,72 +1,26 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-// import AppBar from '@mui/material/AppBar';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
+import Badge, { BadgeProps } from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { Accordion, AccordionDetails, AccordionSummary, Drawer, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useTheme } from '@mui/material';
+import { Drawer, useTheme } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Divider from '@mui/material/Divider';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link, Link as RouterLink, useNavigate } from 'react-router-dom';
 import ProductSearch from './Search';
 import AppNavBar from './AppNavBar';
-
-
-// //搜尋欄
-// const Search = styled('div')(({ theme }) => ({
-//     position: 'relative',
-//     borderRadius: theme.shape.borderRadius,
-//     backgroundColor: alpha(theme.palette.common.white, 0.15),
-//     '&:hover': {
-//         backgroundColor: alpha(theme.palette.common.white, 0.25),
-//     },
-//     marginRight: theme.spacing(2),
-//     marginLeft: 0,
-//     width: '100%',
-//     [theme.breakpoints.up('sm')]: {
-//         marginLeft: theme.spacing(3),
-//         width: 'auto',
-//     },
-// }));
-// //搜尋欄的定位
-// const SearchIconWrapper = styled('div')(({ theme }) => ({
-//     padding: theme.spacing(0, 2),
-//     height: '100%',
-//     position: 'absolute',
-//     pointerEvents: 'none',
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-// }));
-// //搜尋欄位
-// const StyledInputBase = styled(InputBase)(({ theme }) => ({
-//     color: 'inherit',
-//     '& .MuiInputBase-input': {
-//         padding: theme.spacing(1, 1, 1, 0),
-//         // vertical padding + font size from searchIcon
-//         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-//         transition: theme.transitions.create('width'),
-//         width: '100%',
-//         [theme.breakpoints.up('md')]: {
-//             width: '20ch',
-//         },
-//     },
-// }));
 
 export default function Navbar() {
     //左邊欄位打開方法
@@ -121,6 +75,7 @@ export default function Navbar() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
     //左邊搜尋欄打開的內容
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
@@ -142,7 +97,13 @@ export default function Navbar() {
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const navigate = useNavigate();
+    const userId = localStorage.getItem('userId');
 
+    const handleCartClick = () => {
+        // 在单击购物车图标时进行导航到 '/cart' 页面
+        navigate(`/cart?userId=${userId}`);
+    };
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -161,7 +122,8 @@ export default function Navbar() {
     };
 
     //isLoggedIn 表示用戶是否已經登入
-    const isLoggedIn = true; // 或根據實際情況設置為 true 或 false
+    const isLoggedIn = userId !== null;
+    // const isLoggedIn = false; // 或根據實際情況設置為 true 或 false
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
@@ -179,28 +141,40 @@ export default function Navbar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-           {isLoggedIn ? (
-      <>
-        <MenuItem component={RouterLink} to="/Profile" onClick={handleMenuClose}>
-          我的帳號
-        </MenuItem>
-        <MenuItem component={RouterLink} to="/my-orders" onClick={handleMenuClose}>
-          我的訂單
-        </MenuItem>
-      </>
-    ) : (
-      <>
-        <MenuItem component={RouterLink} to="/Login" onClick={handleMenuClose}>
-          登入
-        </MenuItem>
-        <MenuItem component={RouterLink} to="/Create" onClick={handleMenuClose}>
-          註冊
-        </MenuItem>
-      </>
-    )}
+            {isLoggedIn ? (
+                <>
+                    <MenuItem component={RouterLink} 
+                    to={{
+                        pathname: '/Profile',
+                        search: `?userId=${userId}`,
+                    }} onClick={handleMenuClose}>
+                        我的帳號
+                    </MenuItem>
+                    <MenuItem component={RouterLink} to="/my-orders" onClick={handleMenuClose}>
+                        我的訂單
+                    </MenuItem>
+                </>
+            ) : (
+                <>
+                    <MenuItem component={RouterLink} to="/Login" onClick={handleMenuClose}>
+                        登入
+                    </MenuItem>
+                    <MenuItem component={RouterLink} to="/Create" onClick={handleMenuClose}>
+                        註冊
+                    </MenuItem>
+                </>
+            )}
         </Menu>
     );
-
+    //購物車上的數字
+    const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+        '& .MuiBadge-badge': {
+            right: -3,
+            top: 13,
+            border: `2px solid ${theme.palette.background.paper}`,
+            padding: '0 4px',
+        },
+    }));
     const mobileMenuId = 'primary-search-account-menu-mobile';
     const renderMobileMenu = (
         <Menu
@@ -273,32 +247,20 @@ export default function Navbar() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        MoMo購物網
+                        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            MoMo購物網
+                        </Link>
                     </Typography>
-                    {/* <Search>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </Search> */}
-                    <ProductSearch/>
+                    <ProductSearch />
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
                         <IconButton
+                            aria-label="cart"
                             size="large"
-                            aria-label="show 17 new notifications"
                             color="inherit"
-                        >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
+                            onClick={handleCartClick}>
+                            <Badge badgeContent={4} color="error">
+                                <ShoppingCartIcon />
                             </Badge>
                         </IconButton>
                         <IconButton
@@ -346,14 +308,14 @@ export default function Navbar() {
                 variant="persistent"
                 anchor="left"
                 open={open}
-            > 
+            >
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <AppNavBar/>
+                <AppNavBar />
             </Drawer>
             <Main open={open} />
         </Box>

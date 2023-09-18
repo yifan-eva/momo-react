@@ -12,32 +12,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// const formData = new FormData();
-// formData.append('UserName','miko');
-// formData.append('UserId','meko');
-// formData.append('UserPwd','0914');
-// formData.append('Email','meko@gmail.com');
-// // https://localhost:44373/Member/Create
-//     fetch('https://localhost:44373/Member/Create', {
-//         method: 'post',
-//         body: formData,
-//       //   headers: {
-//       //     'Access-Control-Allow-Origin': '*', 
-//       //     // 允許所有來源的跨域請求
-//       // },
-//         // Other setting you need
-//     // 不需要設定 'Content-Type': 'multipart/form-data' ，已經用 FormData 物件作為請求內容了
-//     })
-//     .then((response) => {console.log("aa",response);response.json();})
-//     .then((json) => {
-//     // 回應結果
-//     console.log("bb",json);
-//     })
-//     .catch((error) => {
-//     // 回應錯誤
-//     console.log("cc",error);
-//     });
-
 export  function MemberCreate() {
   const [formData, setFormData] = useState({
     UserId: '',

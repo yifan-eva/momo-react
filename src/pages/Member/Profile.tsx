@@ -1,10 +1,7 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,20 +9,202 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+  const [formData, setFormData] = useState({
+    userId: '',
+    userPwd: '',
+    RUserPwd: '',
+    userName: '',
+    email: '',
+    birth: '',
+    phone: '',
+  });
+  const [formErrors, setFormErrors] = useState({
+    userId: '',
+    userPwd: '',
+    RUserPwd: '',
+    userName: '',
+    email: '',
+    birth: '',
+    phone: '',
+  });
+  const validateForm = () => {
+    const errors = {
+      userId: '',
+    userPwd: '',
+    RUserPwd: '',
+    userName: '',
+    email: '',
+    birth: '',
+    phone: '',
+    };
+
+    if (!formData.userId) {
+      errors.userId = '請輸入會員帳號';
+    }
+    if (!formData.userPwd) {
+      errors.userPwd = '請輸入會員密碼';
+    }
+    if (!formData.RUserPwd) {
+      errors.RUserPwd = '請確認密碼';
+    }
+    if (!formData.userName) {
+      errors.userName = '請輸入會員名稱';
+    }
+    if (!formData.email) {
+      errors.email = '請輸入電子郵件';
+    }
+    if (!formData.birth) {
+      errors.birth = '請輸入會員生日';
+    }
+    if (!formData.phone) {
+      errors.phone = '請輸入會員電話';
+    }
+
+    setFormErrors(errors);
+
+    // 如果有任何錯誤，返回false
+    return Object.values(errors).every((error) => error === '');
   };
 
+  const handleInputValidation = (event: { target: { name: any; value: any; }; }) => {
+    const { name, value } = event.target;
+    const errors = { ...formErrors };
+
+    // 驗證邏輯
+    switch (name) {
+      case 'UserId':
+        const UserIdPattern = /^[a-zA-Z0-9]*$/;
+        //清除之前的錯誤消息
+        errors.userId = '';
+        if (!value) {
+          errors.userId = '請輸入會員帳號';
+        } else if (!UserIdPattern.test(value)) {
+          errors.userId = '帳號只能輸入英文或數字';
+        }
+        break;
+      case 'UserPwd':
+        const UserPwdPattern = /^[a-zA-Z0-9]*$/;
+        //清除之前的錯誤消息
+        errors.userPwd = '';
+        if (!value) {
+          errors.userPwd = '請輸入會員密碼';
+        } else if (!UserPwdPattern.test(value)) {
+          errors.userPwd = '帳號只能輸入英文或數字';
+        }
+        break;
+      case 'RUserPwd':
+        const RUserPwdPattern = value === formData.userPwd;
+        errors.RUserPwd = '';
+        if (!value) {
+          errors.RUserPwd = '請輸入會員密碼'
+        } else if (!RUserPwdPattern) {
+          errors.RUserPwd = '密碼不一樣'
+        }
+        break;
+      case 'UserName':
+        errors.userName = value ? '' : '請輸入會員名稱';
+        break;
+      case 'Email':
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        errors.email = '';
+        if (!value) {
+          errors.email = '請輸入電子郵件'
+        } else if (!emailPattern.test(value)) {
+          errors.email = '請輸入有效的電子郵件'
+        }
+        break;
+      case 'Birth':
+        errors.birth = value ? '' : '請輸入會員生日';
+        break;
+      case 'Phone':
+        const phonePattern = /^09\d{8}$/;
+        errors.phone = '';
+        if (!value) {
+          errors.phone = '請輸入會員電話'
+        } else if (!phonePattern.test(value)) {
+          errors.phone = '請輸入有效的10位數字電話號碼'
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    setFormErrors(errors);
+  };
+
+  const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
+    const { name, value } = event.target;
+    console.log(event.target.name)
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        console.log(userId);
+  
+        const response = await fetch(`https://localhost:44373/MemberProfile/` + userId, {
+          method: 'POST',
+        });
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const data = await response.json();
+        console.log('data', data);
+        setFormData(data);
+        // 在数据加载完成后才执行相关操作
+        console.log("1", formData.userId);
+      } catch (error) {
+        console.error('發生錯誤:', error);
+      }
+    };
+    console.log("11", formData.userId);
+  
+    fetchData();
+  }, []);
+  
+  // useEffect(() => {
+  //   const userId = localStorage.getItem("userId");
+  //   console.log(userId)
+  //   fetch(`https://localhost:44373/MemberProfile/` + localStorage.getItem("userId"), {
+  //     method: 'POST',
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // 處理返回的商品列表
+  //       console.log('data', data);
+  //       setFormData(data);
+  //       setDataLoaded(true);
+  //     })
+  //     .catch(error => {
+  //       console.error('發生錯誤:', error);
+  //     });
+  // }, []);
+
+  // const [dataLoaded, setDataLoaded] = useState(false);
+  // useEffect(() => {
+  //   // 数据已加载
+  //   if (dataLoaded) {
+  //     console.log("2", formData.UserId);
+  //   }
+  // }, [dataLoaded]);
+  // console.log("1", formData.UserId)
+
+  // 主題的設置
+  const defaultTheme = createTheme();
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -42,50 +221,140 @@ export default function Profile() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            註冊會員
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          {/* onSubmit={handleSubmit} */}
+          <Box component="form" noValidate sx={{ mt: 1 }}
+          // onSubmit={handleSubmit}
+          >
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="UserId"
+              label="會員帳號"
+              name="UserId"
+              autoComplete="id"
               autoFocus
+              defaultValue={formData.userId}
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
             />
+            <Typography variant="caption" color="error">
+              {formErrors.userId}
+            </Typography>
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
+              name="UserPwd"
+              label="會員密碼"
               type="password"
-              id="password"
+              id="UserPwd"
               autoComplete="current-password"
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+            <Typography variant="caption" color="error">
+              {formErrors.userPwd}
+            </Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="RUserPwd"
+              label="確認密碼"
+              type="password"
+              id="RUserPwd"
+              autoComplete="current-password"
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
             />
+            <Typography variant="caption" color="error">
+              {formErrors.RUserPwd}
+            </Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="UserName"
+              label="會員名稱"
+              id="UserName"
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
+            />
+            <Typography variant="caption" color="error">
+              {formErrors.userName}
+            </Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="Email"
+              label="電子郵件"
+              type="email"
+              id="Email"
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
+            />
+            <Typography variant="caption" color="error">
+              {formErrors.email}
+            </Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="Birth"
+              helperText="會員生日"
+              type="date"
+              id="Birth"
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
+            />
+            <Typography variant="caption" color="error">
+              {formErrors.birth}
+            </Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="Phone"
+              label="會員電話"
+              type="number"
+              id="Phone"
+              onChange={(e) => {
+                handleInputChange(e);
+                handleInputValidation(e);
+              }}
+            />
+            <Typography variant="caption" color="error">
+              {formErrors.phone}
+            </Typography>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+            // onClick={handleSubmit}
             >
-              Sign In
+              註冊
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
+            <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="/Demo/Login" variant="body2">
+                  {"已經有帳號了?那快來登入吧!"}
                 </Link>
               </Grid>
             </Grid>
