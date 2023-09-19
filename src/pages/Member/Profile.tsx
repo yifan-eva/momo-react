@@ -13,53 +13,36 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-
+  const UserId = localStorage.getItem('userId')
   const [formData, setFormData] = useState({
     userId: '',
-    userPwd: '',
-    RUserPwd: '',
     userName: '',
     email: '',
-    birth: '',
     phone: '',
+    birth:'',
   });
   const [formErrors, setFormErrors] = useState({
     userId: '',
-    userPwd: '',
-    RUserPwd: '',
     userName: '',
     email: '',
-    birth: '',
     phone: '',
   });
   const validateForm = () => {
     const errors = {
       userId: '',
-    userPwd: '',
-    RUserPwd: '',
-    userName: '',
-    email: '',
-    birth: '',
-    phone: '',
+      userName: '',
+      email: '',
+      phone: '',
     };
 
     if (!formData.userId) {
       errors.userId = '請輸入會員帳號';
-    }
-    if (!formData.userPwd) {
-      errors.userPwd = '請輸入會員密碼';
-    }
-    if (!formData.RUserPwd) {
-      errors.RUserPwd = '請確認密碼';
     }
     if (!formData.userName) {
       errors.userName = '請輸入會員名稱';
     }
     if (!formData.email) {
       errors.email = '請輸入電子郵件';
-    }
-    if (!formData.birth) {
-      errors.birth = '請輸入會員生日';
     }
     if (!formData.phone) {
       errors.phone = '請輸入會員電話';
@@ -87,25 +70,6 @@ export default function Profile() {
           errors.userId = '帳號只能輸入英文或數字';
         }
         break;
-      case 'UserPwd':
-        const UserPwdPattern = /^[a-zA-Z0-9]*$/;
-        //清除之前的錯誤消息
-        errors.userPwd = '';
-        if (!value) {
-          errors.userPwd = '請輸入會員密碼';
-        } else if (!UserPwdPattern.test(value)) {
-          errors.userPwd = '帳號只能輸入英文或數字';
-        }
-        break;
-      case 'RUserPwd':
-        const RUserPwdPattern = value === formData.userPwd;
-        errors.RUserPwd = '';
-        if (!value) {
-          errors.RUserPwd = '請輸入會員密碼'
-        } else if (!RUserPwdPattern) {
-          errors.RUserPwd = '密碼不一樣'
-        }
-        break;
       case 'UserName':
         errors.userName = value ? '' : '請輸入會員名稱';
         break;
@@ -117,9 +81,6 @@ export default function Profile() {
         } else if (!emailPattern.test(value)) {
           errors.email = '請輸入有效的電子郵件'
         }
-        break;
-      case 'Birth':
-        errors.birth = value ? '' : '請輸入會員生日';
         break;
       case 'Phone':
         const phonePattern = /^09\d{8}$/;
@@ -153,15 +114,15 @@ export default function Profile() {
       try {
         const userId = localStorage.getItem("userId");
         console.log(userId);
-  
+
         const response = await fetch(`https://localhost:44373/MemberProfile/` + userId, {
           method: 'POST',
         });
-  
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-  
+
         const data = await response.json();
         console.log('data', data);
         setFormData(data);
@@ -171,11 +132,37 @@ export default function Profile() {
         console.error('發生錯誤:', error);
       }
     };
-    console.log("11", formData.userId);
-  
     fetchData();
   }, []);
-  
+
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    event?.preventDefault();
+
+    if (validateForm()) {
+      const form = new FormData();
+      form.append('UserId', formData.userId);
+      form.append('UserName', formData.userName);
+      form.append('Email', formData.email);
+      form.append('Phone', formData.phone);
+      try {
+        const response = await fetch('https://localhost:44373/MemberEdit/', {
+          method: 'POST',
+          body: form,
+        });
+        if (response.ok) {
+          console.log('提交成功');
+          // navigate('/Login');
+        } else {
+          console.error('請檢查填寫內容', Error);
+        }
+      } catch (error) {
+        //捕獲異常
+        console.error('發生錯誤', error);
+      }
+    }
+  };
+
+  console.log("11", formData.userId);
   // useEffect(() => {
   //   const userId = localStorage.getItem("userId");
   //   console.log(userId)
@@ -221,12 +208,9 @@ export default function Profile() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            註冊會員
+            會員資料
           </Typography>
-          {/* onSubmit={handleSubmit} */}
-          <Box component="form" noValidate sx={{ mt: 1 }}
-          // onSubmit={handleSubmit}
-          >
+          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
@@ -236,7 +220,10 @@ export default function Profile() {
               name="UserId"
               autoComplete="id"
               autoFocus
-              defaultValue={formData.userId}
+              key={formData.userId}
+              // defaultValue={formData.userId}
+              disabled
+              value={formData.userId}
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
@@ -245,7 +232,7 @@ export default function Profile() {
             <Typography variant="caption" color="error">
               {formErrors.userId}
             </Typography>
-            <TextField
+            {/* <TextField
               margin="normal"
               required
               fullWidth
@@ -275,10 +262,10 @@ export default function Profile() {
                 handleInputChange(e);
                 handleInputValidation(e);
               }}
-            />
-            <Typography variant="caption" color="error">
+            /> */}
+            {/* <Typography variant="caption" color="error">
               {formErrors.RUserPwd}
-            </Typography>
+            </Typography> */}
             <TextField
               margin="normal"
               required
@@ -286,6 +273,8 @@ export default function Profile() {
               name="UserName"
               label="會員名稱"
               id="UserName"
+              key={formData.userName}
+              defaultValue={formData.userName}
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
@@ -302,6 +291,8 @@ export default function Profile() {
               label="電子郵件"
               type="email"
               id="Email"
+              key={formData.email}
+              defaultValue={formData.email}
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
@@ -318,14 +309,15 @@ export default function Profile() {
               helperText="會員生日"
               type="date"
               id="Birth"
+              key={formData.birth}
+              value={formData.birth}
+              disabled
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
               }}
             />
-            <Typography variant="caption" color="error">
-              {formErrors.birth}
-            </Typography>
+
             <TextField
               margin="normal"
               required
@@ -334,6 +326,8 @@ export default function Profile() {
               label="會員電話"
               type="number"
               id="Phone"
+              key={formData.phone}
+              value={formData.phone}
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
@@ -349,7 +343,7 @@ export default function Profile() {
               sx={{ mt: 3, mb: 2 }}
             // onClick={handleSubmit}
             >
-              註冊
+              更新會員資料
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>

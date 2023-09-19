@@ -9,15 +9,20 @@ interface CartItem {
     productName: string;
     productPrice: number;
     quantity: number;
+
 }
 export default function Cart() {
-    const userId = localStorage.getItem('userId');
+    // const userId = localStorage.getItem('userId');
     const [cartData, setCartData] = useState<CartItem[]>([]);
     const [itemQuantities, setItemQuantities] = useState<{ [productId: string]: number }>({});
     const navigate = useNavigate();
 
-    const handleButtonClick = () => {
+    const handleBackClick = () => {
         navigate('/Product'); // 导航到指定的路由
+    };
+
+    const handleShopClick = () => {
+        navigate('/OrderCheck1'); // 导航到指定的路由
     };
 
     useEffect(() => {
@@ -96,8 +101,6 @@ export default function Cart() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(removeDto),
-
-                // body: JSON.stringify({cartItemId, userId}),
             });
 
             if (response.ok) {
@@ -111,6 +114,7 @@ export default function Cart() {
             // 处理请求错误
         }
     };
+
 
     return (
         <Container sx={{ py: 8 }} maxWidth="md">
@@ -138,7 +142,6 @@ export default function Cart() {
                                     </Button>
                                 </TableCell>
                                 <TableCell>
-
                                     {item.productName}
                                     <br />
                                     <Typography variant="body2" color="textSecondary">
@@ -148,13 +151,6 @@ export default function Cart() {
                                 </TableCell>
                                 <TableCell>
                                     <Select
-                                        // value={item.quantity}
-                                        // onChange={(e) => {
-                                        //     // const quantity = Number(e.target.value);
-                                        //     updateCartItemQuantity(item.userId,item.cartItemId, item.quantity);
-                                        // }}
-                                        // value={item.quantity}
-                                        // onChange={handleQuantityChange}
                                         value={itemQuantities[item.productId]} // 使用存储在对象中的数量
                                         onChange={(e) => handleQuantityChange(e, item.userId, item.productId)} // 传递唯一标识
                                     >
@@ -174,17 +170,17 @@ export default function Cart() {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={2}>
-                                <Button variant="contained" color="primary" onClick={handleButtonClick}>
+                            <TableCell colSpan={1}>
+                                <Button variant="outlined" color="primary" onClick={handleBackClick}>
                                     {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
                                 </Button>
                             </TableCell>
-                            <TableCell colSpan={3} sx={{ textAlign: 'right', fontSize: '18px' }}>
+                            <TableCell colSpan={2} sx={{ textAlign: 'right', fontSize: '18px' }}>
                                 總金額 NT$
                                 {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell colSpan={2}>
-                                <Button variant="contained" color="primary">
+                            <TableCell colSpan={1}>
+                                <Button variant="contained" color="primary" onClick={handleShopClick}>
                                     我要購買
                                 </Button>
                             </TableCell>

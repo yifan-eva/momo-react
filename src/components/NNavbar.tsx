@@ -121,6 +121,10 @@ export default function Navbar() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const handleLoggout = () => {
+        localStorage.removeItem('userId');
+        // 继续处理其他的登出逻辑
+    };
     //isLoggedIn 表示用戶是否已經登入
     const isLoggedIn = userId !== null;
     // const isLoggedIn = false; // 或根據實際情況設置為 true 或 false
@@ -152,6 +156,9 @@ export default function Navbar() {
                     </MenuItem>
                     <MenuItem component={RouterLink} to="/my-orders" onClick={handleMenuClose}>
                         我的訂單
+                    </MenuItem>
+                    <MenuItem component={RouterLink} to="/" onClick={handleLoggout}>
+                        登出
                     </MenuItem>
                 </>
             ) : (

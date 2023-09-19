@@ -12,7 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export  function MemberCreate() {
+export function MemberCreate() {
   const [formData, setFormData] = useState({
     UserId: '',
     UserPwd: '',
@@ -21,7 +21,7 @@ export  function MemberCreate() {
     Email: '',
     Birth: '',
     Phone: '',
-  }); 
+  });
   const [formErrors, setFormErrors] = useState({
     UserId: '',
     UserPwd: '',
@@ -31,6 +31,7 @@ export  function MemberCreate() {
     Birth: '',
     Phone: '',
   });
+  //傳送給後端得值要正確才會傳送
   const validateForm = () => {
     const errors = {
       UserId: '',
@@ -41,7 +42,7 @@ export  function MemberCreate() {
       Birth: '',
       Phone: '',
     };
-  
+    //開發者工具
     if (!formData.UserId) {
       errors.UserId = '請輸入會員帳號';
     }
@@ -63,23 +64,20 @@ export  function MemberCreate() {
     if (!formData.Phone) {
       errors.Phone = '請輸入會員電話';
     }
-  
     setFormErrors(errors);
-  
     // 如果有任何錯誤，返回false
     return Object.values(errors).every((error) => error === '');
   };
-  
+  //畫面呈現
   const handleInputValidation = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
     const errors = { ...formErrors };
-  
     // 驗證邏輯
     switch (name) {
       case 'UserId':
-        const UserIdPattern = /^[a-zA-Z0-9]*$/; 
+        const UserIdPattern = /^[a-zA-Z0-9]*$/;
         //清除之前的錯誤消息
-        errors.UserId = ''; 
+        errors.UserId = '';
         if (!value) {
           errors.UserId = '請輸入會員帳號';
         } else if (!UserIdPattern.test(value)) {
@@ -87,9 +85,9 @@ export  function MemberCreate() {
         }
         break;
       case 'UserPwd':
-        const UserPwdPattern = /^[a-zA-Z0-9]*$/; 
+        const UserPwdPattern = /^[a-zA-Z0-9]*$/;
         //清除之前的錯誤消息
-        errors.UserPwd = ''; 
+        errors.UserPwd = '';
         if (!value) {
           errors.UserPwd = '請輸入會員密碼';
         } else if (!UserPwdPattern.test(value)) {
@@ -101,10 +99,10 @@ export  function MemberCreate() {
         errors.RUserPwd = '';
         if (!value) {
           errors.RUserPwd = '請輸入會員密碼'
-        } else if (!RUserPwdPattern){
+        } else if (!RUserPwdPattern) {
           errors.RUserPwd = '密碼不一樣'
         }
-         break;
+        break;
       case 'UserName':
         errors.UserName = value ? '' : '請輸入會員名稱';
         break;
@@ -113,7 +111,7 @@ export  function MemberCreate() {
         errors.Email = '';
         if (!value) {
           errors.Email = '請輸入電子郵件'
-        }else if(!emailPattern.test(value)){
+        } else if (!emailPattern.test(value)) {
           errors.Email = '請輸入有效的電子郵件'
         }
         break;
@@ -121,22 +119,22 @@ export  function MemberCreate() {
         errors.Birth = value ? '' : '請輸入會員生日';
         break;
       case 'Phone':
-        const phonePattern = /^09\d{8}$/; 
+        const phonePattern = /^09\d{8}$/;
         errors.Phone = '';
-        if (!value){
+        if (!value) {
           errors.Phone = '請輸入會員電話'
-        }else if(!phonePattern.test(value)){
+        } else if (!phonePattern.test(value)) {
           errors.Phone = '請輸入有效的10位數字電話號碼'
-        }      
+        }
         break;
 
       default:
         break;
     }
-  
+
     setFormErrors(errors);
   };
-  
+
   const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
     console.log(event.target.name)
@@ -150,33 +148,33 @@ export  function MemberCreate() {
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event?.preventDefault();
     if (validateForm()) {
-    const form = new FormData();
-    form.append('UserId', formData.UserId);
-    form.append('UserPwd', formData.UserPwd);
-    form.append('RUserPwd', formData.RUserPwd);
-    form.append('UserName', formData.UserName);
-    form.append('Email', formData.Email);
-    form.append('Birth', formData.Birth);
-    form.append('Phone', formData.Phone);
-    try {
-      const response = await fetch('https://localhost:44373/MemberCreate', {
-        method: 'POST',
-        body: form,
-      });
-      if (response.ok) {
-        console.log('提交成功');
-        navigate('/Login');
-      } else {
-        console.error('請檢查填寫內容',Error);
+      const form = new FormData();
+      form.append('UserId', formData.UserId);
+      form.append('UserPwd', formData.UserPwd);
+      form.append('RUserPwd', formData.RUserPwd);
+      form.append('UserName', formData.UserName);
+      form.append('Email', formData.Email);
+      form.append('Birth', formData.Birth);
+      form.append('Phone', formData.Phone);
+      try {
+        const response = await fetch('https://localhost:44373/MemberCreate', {
+          method: 'POST',
+          body: form,
+        });
+        if (response.ok) {
+          console.log('提交成功');
+          navigate('/Login');
+        } else {
+          console.error('請檢查填寫內容', Error);
+        }
+      } catch (error) {
+        //捕獲異常
+        console.error('發生錯誤', error);
       }
-    } catch (error) {
-      //捕獲異常
-      console.error('發生錯誤', error);
-    }
     }
   };
-// 主題的設置
-const defaultTheme = createTheme();
+  // 主題的設置
+  const defaultTheme = createTheme();
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -196,7 +194,7 @@ const defaultTheme = createTheme();
             註冊會員
           </Typography>
           {/* onSubmit={handleSubmit} */}
-          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}> 
+          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
@@ -212,7 +210,7 @@ const defaultTheme = createTheme();
               }}
             />
             <Typography variant="caption" color="error">
-            {formErrors.UserId}
+              {formErrors.UserId}
             </Typography>
             <TextField
               margin="normal"
@@ -226,10 +224,10 @@ const defaultTheme = createTheme();
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
-              }}            
+              }}
             />
             <Typography variant="caption" color="error">
-            {formErrors.UserPwd}
+              {formErrors.UserPwd}
             </Typography>
             <TextField
               margin="normal"
@@ -243,25 +241,25 @@ const defaultTheme = createTheme();
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
-              }}            
-              />
-              <Typography variant="caption" color="error">
-            {formErrors.RUserPwd}
+              }}
+            />
+            <Typography variant="caption" color="error">
+              {formErrors.RUserPwd}
             </Typography>
             <TextField
               margin="normal"
               required
               fullWidth
               name="UserName"
-              label="會員名稱"              
-              id="UserName"  
+              label="會員名稱"
+              id="UserName"
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
-              }}            
+              }}
             />
             <Typography variant="caption" color="error">
-            {formErrors.UserName}
+              {formErrors.UserName}
             </Typography>
             <TextField
               margin="normal"
@@ -274,10 +272,10 @@ const defaultTheme = createTheme();
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
-              }}            
+              }}
             />
             <Typography variant="caption" color="error">
-            {formErrors.Email}
+              {formErrors.Email}
             </Typography>
             <TextField
               margin="normal"
@@ -290,10 +288,10 @@ const defaultTheme = createTheme();
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
-              }}                         
+              }}
             />
             <Typography variant="caption" color="error">
-            {formErrors.Birth}
+              {formErrors.Birth}
             </Typography>
             <TextField
               margin="normal"
@@ -306,17 +304,17 @@ const defaultTheme = createTheme();
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
-              }}                    
+              }}
             />
             <Typography variant="caption" color="error">
-            {formErrors.Phone}
+              {formErrors.Phone}
             </Typography>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              // onClick={handleSubmit}
+            // onClick={handleSubmit}
             >
               註冊
             </Button>
@@ -326,7 +324,7 @@ const defaultTheme = createTheme();
                   {"已經有帳號了?那快來登入吧!"}
                 </Link>
               </Grid>
-            </Grid> 
+            </Grid>
           </Box>
         </Box>
       </Container>

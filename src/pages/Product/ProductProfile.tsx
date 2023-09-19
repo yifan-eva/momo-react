@@ -34,9 +34,9 @@ export default function ProductCard() {
             });
     }, []);
 
-    useEffect(() => {
-        console.log(product)
-    }, [product]);
+    // useEffect(() => {
+    //     console.log(product)
+    // }, [product]);
 
     interface Product {
         productId: number;
@@ -143,7 +143,7 @@ export default function ProductCard() {
                 </Card>
             )}
             <br />
-            <Button variant="solid" color="primary" size="lg" onClick={handleButtonClick}>
+            <Button variant="outlined" color="primary" size="lg" onClick={handleButtonClick}>
                 {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
             </Button>
         </Container >
