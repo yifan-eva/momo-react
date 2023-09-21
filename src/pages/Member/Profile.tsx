@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-  const UserId = localStorage.getItem('userId')
+  const userId = localStorage.getItem('userId')
   const [formData, setFormData] = useState({
     userId: '',
     userName: '',
@@ -210,6 +210,8 @@ export default function Profile() {
           <Typography component="h1" variant="h5">
             會員資料
           </Typography>
+          { formData.userName &&
+          (
           <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <TextField
               margin="normal"
@@ -220,7 +222,6 @@ export default function Profile() {
               name="UserId"
               autoComplete="id"
               autoFocus
-              key={formData.userId}
               // defaultValue={formData.userId}
               disabled
               value={formData.userId}
@@ -273,7 +274,6 @@ export default function Profile() {
               name="UserName"
               label="會員名稱"
               id="UserName"
-              key={formData.userName}
               defaultValue={formData.userName}
               onChange={(e) => {
                 handleInputChange(e);
@@ -291,7 +291,6 @@ export default function Profile() {
               label="電子郵件"
               type="email"
               id="Email"
-              key={formData.email}
               defaultValue={formData.email}
               onChange={(e) => {
                 handleInputChange(e);
@@ -309,7 +308,6 @@ export default function Profile() {
               helperText="會員生日"
               type="date"
               id="Birth"
-              key={formData.birth}
               value={formData.birth}
               disabled
               onChange={(e) => {
@@ -326,8 +324,7 @@ export default function Profile() {
               label="會員電話"
               type="number"
               id="Phone"
-              key={formData.phone}
-              value={formData.phone}
+              defaultValue={formData.phone}
               onChange={(e) => {
                 handleInputChange(e);
                 handleInputValidation(e);
@@ -345,14 +342,9 @@ export default function Profile() {
             >
               更新會員資料
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/Demo/Login" variant="body2">
-                  {"已經有帳號了?那快來登入吧!"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
+          )
+          }
         </Box>
       </Container>
     </ThemeProvider>
