@@ -79,11 +79,11 @@ export default function Navbar() {
     //左邊搜尋欄打開的內容
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
-        alignItems: 'center',
+        // alignItems: 'center',
         padding: theme.spacing(0, 1),
         // necessary for content to be below app bar
         ...theme.mixins.toolbar,
-        justifyContent: 'flex-end',
+        // justifyContent: 'flex-end',
     }));
     const AccordionHandleChange =
         (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -95,7 +95,7 @@ export default function Navbar() {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
 
-    const isMenuOpen = Boolean(anchorEl);
+    const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
@@ -104,8 +104,8 @@ export default function Navbar() {
         // 在单击购物车图标时进行导航到 '/cart' 页面
         navigate(`/cart?userId=${userId}`);
     };
-    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+    const handleProfileMenuOpen = () => {
+        setIsMenuOpen(true);
     };
 
     const handleMobileMenuClose = () => {
@@ -113,8 +113,9 @@ export default function Navbar() {
     };
 
     const handleMenuClose = () => {
-        setAnchorEl(null);
-        handleMobileMenuClose();
+        // setAnchorEl(null);
+        // handleMobileMenuClose();
+        setIsMenuOpen(false);
     };
 
     const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -131,6 +132,7 @@ export default function Navbar() {
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
+            sx={{mt: 6}}
             anchorEl={anchorEl}
             anchorOrigin={{
                 vertical: 'top',
@@ -145,32 +147,36 @@ export default function Navbar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            {isLoggedIn ? (
-                <>
-                    <MenuItem component={RouterLink} 
-                    to={{
-                        pathname: '/Profile',
-                        search: `?userId=${userId}`,
-                    }} onClick={handleMenuClose}>
-                        我的帳號
-                    </MenuItem>
-                    <MenuItem component={RouterLink} to="/my-orders" onClick={handleMenuClose}>
-                        我的訂單
-                    </MenuItem>
-                    <MenuItem component={RouterLink} to="/" onClick={handleLoggout}>
-                        登出
-                    </MenuItem>
-                </>
-            ) : (
-                <>
+            {isLoggedIn ? 
+                
+                [(
+                    <div key={"loggedIn"}>
+                        <MenuItem component={RouterLink} 
+                        to={{
+                            pathname: '/Profile',
+                            search: `?userId=${userId}`,
+                        }} onClick={handleMenuClose}>
+                            我的帳號
+                        </MenuItem>
+                        <MenuItem component={RouterLink} to="/my-orders" onClick={handleMenuClose}>
+                            我的訂單
+                        </MenuItem>
+                        <MenuItem component={RouterLink} to="/" onClick={handleLoggout}>
+                            登出
+                        </MenuItem>
+                    </div>
+                )]
+                
+             : [(
+                <div key={"UnLoggedIn"}>
                     <MenuItem component={RouterLink} to="/Login" onClick={handleMenuClose}>
                         登入
                     </MenuItem>
                     <MenuItem component={RouterLink} to="/Create" onClick={handleMenuClose}>
                         註冊
                     </MenuItem>
-                </>
-            )}
+                </div>
+            )]}
         </Menu>
     );
     //購物車上的數字
@@ -261,15 +267,19 @@ export default function Navbar() {
                     <ProductSearch />
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            aria-label="cart"
-                            size="large"
-                            color="inherit"
-                            onClick={handleCartClick}>
-                            <Badge badgeContent={4} color="error">
-                                <ShoppingCartIcon />
-                            </Badge>
-                        </IconButton>
+                        <div>
+                            <IconButton
+                                aria-label="cart"
+                                size="large"
+                                color="inherit"
+                                onClick={handleCartClick}>
+                                <Badge badgeContent={4} color="error">
+                                    <ShoppingCartIcon />
+                                </Badge>
+                            </IconButton>
+                            {renderMenu}
+                        </div>
+                        
                         <IconButton
                             size="large"
                             edge="end"
@@ -281,9 +291,10 @@ export default function Navbar() {
                         >
                             <AccountCircle />
                         </IconButton>
-                        {renderMobileMenu}
-                        {renderMenu}
+                        
                     </Box>
+                    {renderMobileMenu}
+                    
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
