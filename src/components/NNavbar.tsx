@@ -322,6 +322,7 @@ export default function Navbar() {
                     left: 0,
                     top: 0,
                     bottom: 0, // 或者設置其他適當的高度
+                    zIndex: 99,
                 }}
                 variant="persistent"
                 anchor="left"
