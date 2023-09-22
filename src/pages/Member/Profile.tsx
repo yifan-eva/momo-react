@@ -2,8 +2,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -13,8 +11,26 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-  const userId = localStorage.getItem('userId')
+  const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
+
+  // 检查用户是否已登录
+  useEffect(() => {
+    if (!userId) {
+      alert("請先登入")
+      // 如果用户未登录，将其重定向到登录页面或执行其他操作
+      navigate('/login'); // 重定向到登录页面
+    }
+  }, [userId, navigate]);
+
   const [formData, setFormData] = useState({
+    userId: '',
+    userName: '',
+    email: '',
+    phone: '',
+    birth:'',
+  });
+  const [formNewData, setFormNewData] = useState({
     userId: '',
     userName: '',
     email: '',
@@ -47,9 +63,7 @@ export default function Profile() {
     if (!formData.phone) {
       errors.phone = '請輸入會員電話';
     }
-
     setFormErrors(errors);
-
     // 如果有任何錯誤，返回false
     return Object.values(errors).every((error) => error === '');
   };
@@ -91,23 +105,20 @@ export default function Profile() {
           errors.phone = '請輸入有效的10位數字電話號碼'
         }
         break;
-
       default:
         break;
     }
-
     setFormErrors(errors);
   };
 
   const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
     console.log(event.target.name)
-    setFormData({
-      ...formData,
+    setFormNewData({
+      ...formNewData,
       [name]: value,
     });
   };
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,6 +137,7 @@ export default function Profile() {
         const data = await response.json();
         console.log('data', data);
         setFormData(data);
+        setFormNewData(data)
         // 在数据加载完成后才执行相关操作
         console.log("1", formData.userId);
       } catch (error) {
@@ -139,19 +151,21 @@ export default function Profile() {
     event?.preventDefault();
 
     if (validateForm()) {
-      const form = new FormData();
-      form.append('UserId', formData.userId);
-      form.append('UserName', formData.userName);
-      form.append('Email', formData.email);
-      form.append('Phone', formData.phone);
+      // const form = new FormData();
+      const formNew = new FormData();
+      formNew.append('UserId', formNewData.userId);
+      formNew.append('UserName', formNewData.userName);
+      formNew.append('Email', formNewData.email);
+      formNew.append('Phone', formNewData.phone);
       try {
         const response = await fetch('https://localhost:44373/MemberEdit/', {
           method: 'POST',
-          body: form,
+          body: formNew,
         });
         if (response.ok) {
           console.log('提交成功');
-          // navigate('/Login');
+          alert('會員更新成功，傳送至商品頁面')
+          navigate(`/Product`);
         } else {
           console.error('請檢查填寫內容', Error);
         }
@@ -161,35 +175,7 @@ export default function Profile() {
       }
     }
   };
-
-  console.log("11", formData.userId);
-  // useEffect(() => {
-  //   const userId = localStorage.getItem("userId");
-  //   console.log(userId)
-  //   fetch(`https://localhost:44373/MemberProfile/` + localStorage.getItem("userId"), {
-  //     method: 'POST',
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       // 處理返回的商品列表
-  //       console.log('data', data);
-  //       setFormData(data);
-  //       setDataLoaded(true);
-  //     })
-  //     .catch(error => {
-  //       console.error('發生錯誤:', error);
-  //     });
-  // }, []);
-
-  // const [dataLoaded, setDataLoaded] = useState(false);
-  // useEffect(() => {
-  //   // 数据已加载
-  //   if (dataLoaded) {
-  //     console.log("2", formData.UserId);
-  //   }
-  // }, [dataLoaded]);
-  // console.log("1", formData.UserId)
-
+console.log("aa",formNewData)
   // 主題的設置
   const defaultTheme = createTheme();
   return (
@@ -217,12 +203,11 @@ export default function Profile() {
               margin="normal"
               required
               fullWidth
-              id="UserId"
+              id="userId"
               label="會員帳號"
-              name="UserId"
+              name="userId"
               autoComplete="id"
               autoFocus
-              // defaultValue={formData.userId}
               disabled
               value={formData.userId}
               onChange={(e) => {
@@ -233,47 +218,13 @@ export default function Profile() {
             <Typography variant="caption" color="error">
               {formErrors.userId}
             </Typography>
-            {/* <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="UserPwd"
-              label="會員密碼"
-              type="password"
-              id="UserPwd"
-              autoComplete="current-password"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.userPwd}
-            </Typography>
             <TextField
               margin="normal"
               required
               fullWidth
-              name="RUserPwd"
-              label="確認密碼"
-              type="password"
-              id="RUserPwd"
-              autoComplete="current-password"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            /> */}
-            {/* <Typography variant="caption" color="error">
-              {formErrors.RUserPwd}
-            </Typography> */}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="UserName"
+              name="userName"
               label="會員名稱"
-              id="UserName"
+              id="userName"
               defaultValue={formData.userName}
               onChange={(e) => {
                 handleInputChange(e);
@@ -287,10 +238,10 @@ export default function Profile() {
               margin="normal"
               required
               fullWidth
-              name="Email"
+              name="email"
               label="電子郵件"
               type="email"
-              id="Email"
+              id="email"
               defaultValue={formData.email}
               onChange={(e) => {
                 handleInputChange(e);
@@ -320,10 +271,10 @@ export default function Profile() {
               margin="normal"
               required
               fullWidth
-              name="Phone"
+              name="phone"
               label="會員電話"
               type="number"
-              id="Phone"
+              id="phone"
               defaultValue={formData.phone}
               onChange={(e) => {
                 handleInputChange(e);

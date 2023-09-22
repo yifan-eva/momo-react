@@ -18,6 +18,8 @@ export default function ProductCard() {
     const categoryId = search.get("categoryId");
     const keyword = search.get("keyword");
     console.log(keyword)
+    console.log(categoryId)
+    
     let params = ''
     let url = 'https://localhost:44373/ProductCategory';
     // 檢查是否有 categoryId 參數
@@ -52,7 +54,7 @@ export default function ProductCard() {
     productPrice: number;
   }
 
-  const [selectedQuantities, setSelectedQuantities] = useState([]);
+  // const [selectedQuantities, setSelectedQuantities] = useState([]);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false); 
   const userId = localStorage.getItem('userId');

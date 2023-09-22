@@ -4,14 +4,11 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Badge, { BadgeProps } from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { Drawer, useTheme } from '@mui/material';
@@ -21,6 +18,9 @@ import Divider from '@mui/material/Divider';
 import { Link, Link as RouterLink, useNavigate } from 'react-router-dom';
 import ProductSearch from './Search';
 import AppNavBar from './AppNavBar';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import AbcIcon from '@mui/icons-material/Abc';
+import { useState } from 'react';
 
 export default function Navbar() {
     //左邊欄位打開方法
@@ -99,11 +99,32 @@ export default function Navbar() {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
+    const adminId = localStorage.getItem('adminid')
 
     const handleCartClick = () => {
+
         // 在单击购物车图标时进行导航到 '/cart' 页面
         navigate(`/cart?userId=${userId}`);
     };
+
+    const handleAdminClick = () => {
+
+        // 在单击购物车图标时进行导航到 '/cart' 页面
+        navigate(`/AdminLogin`);
+    };
+
+    const handleAdminOrderClick = () => {
+
+        // 在单击购物车图标时进行导航到 '/cart' 页面
+        navigate(`/AdminOrder`);
+    };
+
+    const handleAdminMemberClick = () => {
+
+        // 在单击购物车图标时进行导航到 '/cart' 页面
+        navigate(`/AdminMember`);
+    };
+
     const handleProfileMenuOpen = () => {
         setIsMenuOpen(true);
     };
@@ -124,6 +145,7 @@ export default function Navbar() {
 
     const handleLoggout = () => {
         localStorage.removeItem('userId');
+        localStorage.removeItem('admin')
         // 继续处理其他的登出逻辑
     };
     //isLoggedIn 表示用戶是否已經登入
@@ -132,7 +154,7 @@ export default function Navbar() {
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
         <Menu
-            sx={{mt: 6}}
+            sx={{ mt: 6 }}
             anchorEl={anchorEl}
             anchorOrigin={{
                 vertical: 'top',
@@ -147,18 +169,18 @@ export default function Navbar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            {isLoggedIn ? 
-                
+            {isLoggedIn ?
+
                 [(
                     <div key={"loggedIn"}>
-                        <MenuItem component={RouterLink} 
-                        to={{
-                            pathname: '/Profile',
-                            search: `?userId=${userId}`,
-                        }} onClick={handleMenuClose}>
+                        <MenuItem component={RouterLink}
+                            to={{
+                                pathname: '/Profile',
+                                search: `?userId=${userId}`,
+                            }} onClick={handleMenuClose}>
                             我的帳號
                         </MenuItem>
-                        <MenuItem component={RouterLink} to="/my-orders" onClick={handleMenuClose}>
+                        <MenuItem component={RouterLink} to={`/OrderCheck2?userid=${userId}`} onClick={handleMenuClose}>
                             我的訂單
                         </MenuItem>
                         <MenuItem component={RouterLink} to="/" onClick={handleLoggout}>
@@ -166,28 +188,20 @@ export default function Navbar() {
                         </MenuItem>
                     </div>
                 )]
-                
-             : [(
-                <div key={"UnLoggedIn"}>
-                    <MenuItem component={RouterLink} to="/Login" onClick={handleMenuClose}>
-                        登入
-                    </MenuItem>
-                    <MenuItem component={RouterLink} to="/Create" onClick={handleMenuClose}>
-                        註冊
-                    </MenuItem>
-                </div>
-            )]}
+
+                : [(
+                    <div key={"UnLoggedIn"}>
+                        <MenuItem component={RouterLink} to="/Login" onClick={handleMenuClose}>
+                            登入
+                        </MenuItem>
+                        <MenuItem component={RouterLink} to="/Create" onClick={handleMenuClose}>
+                            註冊
+                        </MenuItem>
+                    </div>
+                )]}
         </Menu>
     );
-    //購物車上的數字
-    const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-        '& .MuiBadge-badge': {
-            right: -3,
-            top: 13,
-            border: `2px solid ${theme.palette.background.paper}`,
-            padding: '0 4px',
-        },
-    }));
+
     const mobileMenuId = 'primary-search-account-menu-mobile';
     const renderMobileMenu = (
         <Menu
@@ -205,26 +219,6 @@ export default function Navbar() {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                >
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     size="large"
@@ -267,19 +261,42 @@ export default function Navbar() {
                     <ProductSearch />
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <div>
-                            <IconButton
-                                aria-label="cart"
-                                size="large"
-                                color="inherit"
-                                onClick={handleCartClick}>
-                                <Badge badgeContent={4} color="error">
-                                    <ShoppingCartIcon />
-                                </Badge>
-                            </IconButton>
-                            {renderMenu}
-                        </div>
-                        
+
+                    <IconButton
+                            aria-label="cart"
+                            size="large"
+                            color="inherit"
+                            onClick={handleAdminMemberClick}>
+                            <AbcIcon />
+                        </IconButton>
+
+                        <IconButton
+                            aria-label="cart"
+                            size="large"
+                            color="inherit"
+                            onClick={handleAdminOrderClick}>
+                            <AbcIcon />
+                        </IconButton>
+
+
+                        <IconButton
+                            aria-label="cart"
+                            size="large"
+                            color="inherit"
+                            onClick={handleAdminClick}>
+                            <EngineeringIcon />
+                        </IconButton>
+
+
+                        <IconButton
+                            aria-label="cart"
+                            size="large"
+                            color="inherit"
+                            onClick={handleCartClick}>
+                            <ShoppingCartIcon />
+                        </IconButton>
+
+                        {renderMenu}
                         <IconButton
                             size="large"
                             edge="end"
@@ -291,10 +308,9 @@ export default function Navbar() {
                         >
                             <AccountCircle />
                         </IconButton>
-                        
                     </Box>
                     {renderMobileMenu}
-                    
+
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"

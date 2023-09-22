@@ -11,6 +11,12 @@ import ProductProfile from "./pages/Product/ProductProfile";
 import Cart from "./shop/Cart";
 import OrderCheck1 from "./shop/OrderCheck1";
 import OrderCheck2 from "./shop/OrderCheck2";
+import OrderCheck3 from "./shop/OrderCheck3";
+import NotFound from "./pages/DemoLogin/NotFound";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminOrder from "./pages/Admin/AdminOrder";
+import AdminOrderItem from "./pages/Admin/AdminOrderItem";
+import AdminMember from "./pages/Admin/AdminMember";
 
 function App() {
   return (
@@ -31,6 +37,14 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/OrderCheck1" element={<OrderCheck1 />} />
           <Route path="/OrderCheck2" element={<OrderCheck2 />} />
+          <Route path="/OrderCheck3" element={<OrderCheck3 />} />
+
+          <Route path="/AdminLogin" element={<AdminLogin/>} />
+          <Route path="/AdminOrder" element={<AdminOrder/>} />
+          <Route path="/AdminOrderItem" element={<AdminOrderItem/>} />
+          <Route path="/AdminMember" element={<AdminMember/>} />
+ 
+          <Route path='*' element={<NotFound/>}></Route>
 
 
         </Routes>

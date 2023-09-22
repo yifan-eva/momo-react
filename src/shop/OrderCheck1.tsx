@@ -11,12 +11,12 @@ import ForwardIcon from '@mui/icons-material/Forward';
 import { useState, useEffect } from 'react';
 
 export default function OrderCheck1() {
+    
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId')
+    const token = localStorage.getItem('tokne')
     const [cartData, setCartData] = useState<CartItem[]>([]);
-
-
     const [formData, setFormData] = useState({
         UserId: '',
         OrderDate: '2023-09-19T15:4848.018Z',
@@ -94,6 +94,14 @@ export default function OrderCheck1() {
     const handleBackClick = () => {
         navigate('/cart'); // 导航到指定的路由
     };
+    
+    //判斷是否登入
+    useEffect(() => {
+        if (!userId) {
+          alert("請先登入")
+          navigate('/login'); 
+        }
+      }, [userId, navigate]);
 
     useEffect(() => {
         fetch('https://localhost:44373/CartMember/' + localStorage.getItem('userId'), {
@@ -125,40 +133,34 @@ export default function OrderCheck1() {
     };
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event?.preventDefault();
-        // const ProductName = cartData.map((item) => item.productName);
-        // const ProductPrice = cartData.map((item) => item.productPrice);
         const OrderTotal = cartData.reduce((total, item) => total + item.productPrice, 0);
-        const ProductName = cartData.map((item) => item.productName).join(', ');
-        const ProductPrice = cartData.map((item) => item.productPrice).join(', ');
-        console.log("Product IDs:", ProductName);
-        const form = new FormData();
-        form.append('UserId', formData.UserId);
-        form.append('Pay', formData.Pay);
-        form.append('Place', formData.Place);
-        form.append('OrderName', formData.OrderName);
-        form.append('OrderDate', formData.OrderDate);
-
-        form.append('Status', formData.Status);
-        form.append('ProductName', ProductName);
-        form.append('ProductPrice', ProductPrice);
-        form.append('OrderTotal', OrderTotal.toString());
         try {
-            const response = await fetch('https://localhost:44373/MemberCreate', {
+            const response = await fetch('https://localhost:44373/orders/create', {
                 method: 'POST',
-                body: form,
+                headers: { 'Content-Type': 'application/json',
+                           'Authorization': `Bearea ${token}`},
+                body: JSON.stringify({
+                    UserId :userId,
+                    Pay: formData.Pay,
+                    Place: formData.Place,
+                    OrderName: formData.OrderName,
+                    OrderTotal: OrderTotal
+
+                }),
             });
             if (response.ok) {
                 console.log('提交成功');
-                navigate('/Login');
+                // localhost:44373/orders/useridfannn
+                navigate(`/OrderCheck2?userid=${userId}`);
             } else {
-                console.error('請檢查填寫內容', Error);
+                // console.error('請檢查填寫內容');
+                console.log(response);
             }
         } catch (error) {
             //捕獲異常
             console.error('發生錯誤', error);
         }
     };
-
 
     return (
         <Container component="main" sx={{ py: 8 }} maxWidth="md">

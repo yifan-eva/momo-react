@@ -127,7 +127,6 @@ export function MemberCreate() {
           errors.Phone = '請輸入有效的10位數字電話號碼'
         }
         break;
-
       default:
         break;
     }

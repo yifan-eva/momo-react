@@ -12,7 +12,7 @@ interface CartItem {
 
 }
 export default function Cart() {
-    // const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem('userId');
     const [cartData, setCartData] = useState<CartItem[]>([]);
     const [itemQuantities, setItemQuantities] = useState<{ [productId: string]: number }>({});
     const navigate = useNavigate();
@@ -114,7 +114,13 @@ export default function Cart() {
             // 处理请求错误
         }
     };
-
+    //判斷是否登入
+    useEffect(() => {
+        if (!userId) {
+            alert("請先登入")
+            navigate('/login');
+        }
+    }, [userId, navigate]);
 
     return (
         <Container sx={{ py: 8 }} maxWidth="md">

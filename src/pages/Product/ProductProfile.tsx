@@ -110,30 +110,7 @@ export default function ProductCard() {
                         <div>商品介紹: {product.description}</div>
                         <br />
                         <div>價格: ${product.productPrice}</div>
-
-                        {/* 在此处添加其他商品详细信息 */}
                     </CardContent>
-                    {/* <CardContent>
-                        <Select
-                            placeholder="Select a pet…"
-                            indicator={<KeyboardArrowDown />}
-                            sx={{
-                                width: 100,
-                                [`& .${selectClasses.indicator}`]: {
-                                    transition: '0.2s',
-                                    [`&.${selectClasses.expanded}`]: {
-                                        transform: 'rotate(-180deg)',
-                                    },
-                                },
-                            }}
-                        >
-                            {[...Array(20)].map((_, i) => {
-                                return (
-                                    <Option value={i + 1} key={i}>{i + 1}</Option>
-                                )
-                            })}
-                        </Select>
-                    </CardContent> */}
                     <CardContent>
                         <Button variant="solid" color="primary" size="lg"
                             onClick={() => handleAddToCart(product)}>

@@ -11,8 +11,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 
-export default function Login() {
+
+export default function AdminLogin() {
   const [formData, setFormData] = useState({
     UserId: '',
     UserPwd: '',
@@ -82,18 +84,17 @@ export default function Login() {
 
     });
   };
-  
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (validateForm()) {
       const form = new FormData();
-      form.append('UserId', formData.UserId);
-      form.append('UserPwd', formData.UserPwd);
+      form.append('AdminId', formData.UserId);
+      form.append('AdminPwd', formData.UserPwd);
       // form.append('Token', formData.token);
       try {
-        const response = await fetch('https://localhost:44373/MemberLogin', {
+        const response = await fetch('https://localhost:44373/Admin/Login', {
           method: 'POST',
           body: form,
           headers: {
@@ -103,12 +104,13 @@ export default function Login() {
 
         const responseData = await response.json();
         if (response.ok) {
-          if (responseData.data.userId !== null) {
+          if (responseData.data.adminId !== null) {
             console.log('token', responseData.data.token)
             console.log('提交成功');
-            localStorage.setItem('userId', responseData.data.userId);
+            localStorage.setItem('admin', responseData.data.adminId);
             localStorage.setItem('token', responseData.data.token);
-            navigate('/Product');
+            // alert("成功")
+            navigate('/AdminMember');
           } else {
             console.error('登录失败:', responseData.message);
           }
@@ -133,10 +135,10 @@ export default function Login() {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
+          <EngineeringIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          登入
+          管理員登入
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -144,7 +146,7 @@ export default function Login() {
             required
             fullWidth
             id="UserId"
-            label="會員帳號"
+            label="帳號"
             name="UserId"
             autoComplete="id"
             autoFocus
@@ -174,10 +176,6 @@ export default function Login() {
             {formErrors.UserPwd}
           </Typography>
           <br />
-          {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="記得我"
-          /> */}
           <Button
             type="submit"
             fullWidth
@@ -186,18 +184,6 @@ export default function Login() {
           >
             登入
           </Button>
-          <Grid container>
-            {/* <Grid item xs>
-              <Link href="#" variant="body2">
-                忘記密碼?
-              </Link>
-            </Grid> */}
-            <Grid item>
-              <Link href="/Demo/Create" variant="body2">
-                {"沒有帳號嗎?那快來註冊吧!"}
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>
