@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem } from '@mui/material';
+import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, TableFooter, Toolbar } from '@mui/material';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
@@ -48,21 +48,24 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-type Member = {
-    userId: string,
-    userName: string,
-    email: string,
-    birth: string,
-    phone: string,
+type Product = {
+    productId: string,
+    productName: string,
+    description: string,
+    categoryId: string,
+    productPrice: string,
+    image: string,
+    categoryName: string,
     status: string,
+
 }
 export default function AdminMember() {
     const navigate = useNavigate();
-    const [members, setMembers] = useState<Member[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const userId = localStorage.getItem("userid")
     const amdinId = localStorage.getItem("admin")
     const [searchTerm, setSearchTerm] = useState('')
-    const [memberItems, setMemberItems] = useState<Member[]>([]);
+    const [productItems, setProductItems] = useState<Product[]>([]);
 
     // const handleBackClick = (id: string) => {
     //     navigate(`/AdminOrderItem?orderid=` + id); // 导航到指定的路由
@@ -70,24 +73,24 @@ export default function AdminMember() {
 
     const handleSearch = () => {
         // 使用filter方法篩選符合搜索條件的訂單
-        const filteredMembers = members.filter((member) => {
+        const filteredMembers = products.filter((product) => {
             return (
-                String(member.userId).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(member.userName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(member.email).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(member.birth).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(member.phone).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(member.status).toLowerCase().includes(searchTerm.toLowerCase())
+                String(product.productId).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(product.productName).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(product.productPrice).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(product.categoryName).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(product.image).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(product.status).toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
         // 更新訂單列表
-        setMemberItems(filteredMembers);
+        setProductItems(filteredMembers);
     };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://localhost:44373/MemberEdit/all`, {
+                const response = await fetch(`https://localhost:44373/Product/all`, {
                     method: 'POST',
                 });
 
@@ -96,7 +99,7 @@ export default function AdminMember() {
                 }
                 const data = await response.json();
                 console.log('order', data);
-                setMembers(data);
+                setProducts(data);
                 // 在数据加载完成后才执行相关操作
             } catch (error) {
                 console.error('發生錯誤:', error);
@@ -105,38 +108,34 @@ export default function AdminMember() {
         fetchData();
     }, []);
 
-    const handleSubmit = async (memberId: string) => {
+    const handleStatusSubmit = async (productId: string) => {
         // 找到与 memberId 匹配的会员对象
-        const updatedMembers = members.map((member) => {
-            if (member.userId === memberId) {
-                // 判断当前状态
-                if (member.status === 'BLOCK') {
-                    // 如果当前是 BLOCK，将状态切换为 UNBLOCK
-                    member.status = 'UNBLOCK';
+        const updatedProducts = products.map((product) => {
+            if (product.productId === productId) {
+                if (product.status === 'off') {
+                    product.status = 'on';
                 } else {
-                    // 如果当前是 UNBLOCK，将状态切换为 BLOCK
-                    member.status = 'BLOCK';
+                    product.status = 'off';
                 }
             }
             // 返回更新后的会员对象
-            return member;
+            return product;
         });
         // 创建 FormData，并将 memberId 和新的 Status 添加到 FormData 中
         const formData = new FormData();
-        formData.append('UserId', memberId);
-        formData.append('Status', updatedMembers.find((member) => member.userId === memberId)?.status || '');
-    
+        formData.append('ProductId', productId);
+        formData.append('Status', updatedProducts.find((product) => product.productId === productId)?.status || '');
+
         try {
-            const response = await fetch('https://localhost:44373/MemberEdit/UserStatus', {
+            const response = await fetch('https://localhost:44373/Product/ProductStatus', {
                 method: 'POST',
                 body: formData,
             });
-            
+
             if (response.ok) {
                 console.log('提交成功');
-                alert('更新成功');
                 // 更新本地状态以反映更改
-                setMembers(updatedMembers);
+                setProducts(updatedProducts);
                 // 在请求成功时，可能执行一些其他操作
             } else {
                 console.error('請檢查填寫內容', Error);
@@ -148,8 +147,11 @@ export default function AdminMember() {
             // 可能还需要采取其他操作，如显示网络错误消息
         }
     };
-    
-    
+    const handleSubmit = () => {
+        navigate(`/AdminProductCreate`)
+    }
+
+
     //判斷是否登入
     useEffect(() => {
         if (!amdinId) {
@@ -164,8 +166,8 @@ export default function AdminMember() {
     }, [searchTerm]);
 
     useEffect(() => {
-        setMemberItems(members);
-    }, [members]);
+        setProductItems(products);
+    }, [products]);
 
     return (
         <Container component="main" sx={{ py: 8 }} maxWidth="md">
@@ -184,7 +186,7 @@ export default function AdminMember() {
                                 <ListAltIcon />
                             </Avatar>
                             <Typography component="h1" variant="h5">
-                                會員資料
+                                商品資料
                             </Typography>
                         </Box>
                     </TableCell>
@@ -216,54 +218,65 @@ export default function AdminMember() {
                     <Typography>
                         <TableHead>
                             <TableRow>
-                                <TableCell>會員帳號</TableCell>
-                                <TableCell>會員名稱</TableCell>
-                                <TableCell>電子郵件</TableCell>
-                                <TableCell>會員生日</TableCell>
-                                <TableCell>會員電話</TableCell>
-                                <TableCell>會員狀態</TableCell>
+                                <TableCell>產品ID</TableCell>
+                                <TableCell>產品名稱</TableCell>
+                                <TableCell>產品價錢</TableCell>
+                                <TableCell>產品分類</TableCell>
+                                <TableCell>產品狀態</TableCell>
                                 <TableCell>變更狀態</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {memberItems.length === 0 ? (
+                            {productItems.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7}>找不到此項目</TableCell>
                                 </TableRow>
                             ) : (
-                                memberItems.map((member) => (
-                                    <TableRow key={member.userId}>
+                                productItems.map((product) => (
+                                    <TableRow key={product.productId}>
                                         <TableCell>
-                                            {member.userId}
+                                            {product.productId}
                                         </TableCell>
                                         <TableCell>
-                                            {member.userName}
+                                            {product.productName}
                                         </TableCell>
                                         <TableCell >
-                                            {member.email}
+                                            ${product.productPrice}
                                         </TableCell>
                                         <TableCell>
-                                            {member.birth}
+                                            {product.categoryName}
                                         </TableCell>
                                         <TableCell>
-                                            {member.phone}
-                                        </TableCell>
-                                        <TableCell>
-                                            {member.status}
+                                            {product.status}
                                         </TableCell>
                                         <TableCell>
                                             <Button
-                                                variant= 'outlined'
-                                                color={member.status === 'BLOCK' ? 'error' : 'primary'}
-                                                onClick={() => handleSubmit(member.userId)}
-                                                >
-                                                {member.status}
+                                                variant='outlined'
+                                                color={product.status === 'off' ? 'error' : 'primary'}
+                                                onClick={() => handleStatusSubmit(product.productId)}
+                                            >
+                                                {product.status}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))
                             )}
                         </TableBody>
+                        <Toolbar>
+                            {/* ... 其他工具栏元素 ... */}
+                            <Box sx={{ flexGrow: 1 }} /> {/* 使用 flexGrow 来填充工具栏的剩余空间 */}
+                            <Button
+                                sx={{
+                                    py: 1,
+                                    marginLeft: 'auto' // 将按钮放置在工具栏的末尾
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleSubmit}
+                            >
+                                商品上架
+                            </Button>
+                        </Toolbar>
                     </Typography>
                 </TableContainer>
             </Grid >

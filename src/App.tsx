@@ -17,6 +17,8 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminOrder from "./pages/Admin/AdminOrder";
 import AdminOrderItem from "./pages/Admin/AdminOrderItem";
 import AdminMember from "./pages/Admin/AdminMember";
+import AdminProduct from "./pages/Admin/AdminProduct";
+import AdminProductCreate from "./pages/Admin/AdminProductCreate";
 
 function App() {
   return (
@@ -43,6 +45,8 @@ function App() {
           <Route path="/AdminOrder" element={<AdminOrder/>} />
           <Route path="/AdminOrderItem" element={<AdminOrderItem/>} />
           <Route path="/AdminMember" element={<AdminMember/>} />
+          <Route path="/AdminProduct" element={<AdminProduct/>} />
+          <Route path="/AdminProductCreate" element={<AdminProductCreate/>} />
  
           <Route path='*' element={<NotFound/>}></Route>
 

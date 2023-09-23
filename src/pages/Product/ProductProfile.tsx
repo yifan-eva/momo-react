@@ -2,7 +2,7 @@ import Button from '@mui/joy/Button';
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import { useEffect, useState } from 'react';
-import { Container, createTheme } from '@mui/material';
+import { Container, Snackbar, createTheme } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
@@ -56,27 +56,28 @@ export default function ProductCard() {
                 const cartItem = new FormData();
                 cartItem.append('userId', userId);
                 cartItem.append('productId', product.productId.toString());
-                cartItem.append('quantity', '1'); // 如果quantity也是数字，可以直接传递数字
-                cartItem.append('productName', product.productName.toString()); // 如果quantity也是数字，可以直接传递数字
+                cartItem.append('quantity', '1');
+                cartItem.append('productName', product.productName.toString());
                 cartItem.append('productPrice', product.productPrice.toString())
 
                 const response = await fetch('https://localhost:44373/CartMember/add', {
                     method: 'POST',
                     body: cartItem,
                 });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
+                // if (respnse.ok) {
+                    if (response.ok) {
                         setSnackbarMessage(`成功將 ${product.productName} 添加到購物車`);
                         setSnackbarOpen(true);
+                        console.log("1",snackbarMessage)
+                        console.log("2",snackbarOpen)
                     } else {
+                        const result = await response.json();
                         setSnackbarMessage(`加入購物車失敗: ${result.errorMessage}`);
                         setSnackbarOpen(true);
                     }
-                } else {
-                    throw new Error('网络请求失败');
-                }
+                // } else {
+                //     throw new Error('网络请求失败');
+                // }
             } else {
                 alert('請先登錄以添加產品到購物車。');
                 navigate('/login');
@@ -123,6 +124,19 @@ export default function ProductCard() {
             <Button variant="outlined" color="primary" size="lg" onClick={handleButtonClick}>
                 {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
             </Button>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                message={snackbarMessage}
+                sx={{
+                    '& .MuiSnackbarContent-root': {
+                      backgroundColor: 'green', 
+                      boxShadow: 'none',
+                    },
+                  }}
+            />
+            
         </Container >
     );
 }

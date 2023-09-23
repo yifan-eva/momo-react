@@ -104,12 +104,19 @@ export default function Login() {
         const responseData = await response.json();
         if (response.ok) {
           if (responseData.data.userId !== null) {
-            console.log('token', responseData.data.token)
-            console.log('提交成功');
-            localStorage.setItem('userId', responseData.data.userId);
-            localStorage.setItem('token', responseData.data.token);
-            navigate('/Product');
+            if (responseData.data.status !== "BLOCK" ) {
+              console.log(responseData.data)
+              console.log('token', responseData.data.token)
+              console.log('提交成功');
+              localStorage.setItem('userId', responseData.data.userId);
+              localStorage.setItem('token', responseData.data.token);
+              navigate('/Product');
+            } else {
+              console.log('帳號被封鎖');
+              alert('您的帳號被封鎖，請聯絡客服:0988142336')
+            }
           } else {
+            alert('登入失敗')
             console.error('登录失败:', responseData.message);
           }
         } else {

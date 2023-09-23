@@ -99,7 +99,19 @@ export default function Navbar() {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
-    const adminId = localStorage.getItem('adminid')
+    const adminId = localStorage.getItem('admin')
+
+    //admin的下拉選單
+    const [adminMenuAnchorEl, setAdminMenuAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const handleAdminMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAdminMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleAdminMenuClose = () => {
+        setAdminMenuAnchorEl(null);
+    };
+
 
     const handleCartClick = () => {
 
@@ -124,7 +136,11 @@ export default function Navbar() {
         // 在单击购物车图标时进行导航到 '/cart' 页面
         navigate(`/AdminMember`);
     };
+    const handleAdminProductClick = () => {
 
+        // 在单击购物车图标时进行导航到 '/cart' 页面
+        navigate(`/AdminProduct`);
+    };
     const handleProfileMenuOpen = () => {
         setIsMenuOpen(true);
     };
@@ -144,12 +160,15 @@ export default function Navbar() {
     };
 
     const handleLoggout = () => {
+        alert('帳號以登出，跳回首頁')
         localStorage.removeItem('userId');
         localStorage.removeItem('admin')
+        localStorage.removeItem('token')
         // 继续处理其他的登出逻辑
     };
     //isLoggedIn 表示用戶是否已經登入
     const isLoggedIn = userId !== null;
+    const isAdminLoggin = adminId !== null;
     // const isLoggedIn = false; // 或根據實際情況設置為 true 或 false
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -196,6 +215,62 @@ export default function Navbar() {
                         </MenuItem>
                         <MenuItem component={RouterLink} to="/Create" onClick={handleMenuClose}>
                             註冊
+                        </MenuItem>
+                    </div>
+                )]}
+        </Menu>
+    );
+
+    const adminMenu = (
+        <Menu
+            sx={{ mt: 6 }}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={menuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            anchorEl={adminMenuAnchorEl}
+            open={Boolean(adminMenuAnchorEl)}
+            onClose={handleAdminMenuClose}
+        >
+            {isAdminLoggin ?
+
+                [(
+                    <div key={"loggedIn"}>
+                        <MenuItem onClick={handleAdminMemberClick}>
+                            <MenuItem>
+                                <AbcIcon fontSize="small" />
+                            </MenuItem>
+                            會員管理
+                        </MenuItem>
+                        <MenuItem onClick={handleAdminOrderClick}>
+                            <MenuItem>
+                                <AbcIcon fontSize="small" />
+                            </MenuItem>
+                            訂單管理
+                        </MenuItem>
+                        <MenuItem onClick={handleAdminProductClick}>
+                            <MenuItem>
+                                <AbcIcon fontSize="small" />
+                            </MenuItem>
+                            商品管理
+                        </MenuItem>
+                    </div>
+
+                )]
+
+                : [(
+                    <div key={"UnLoggedIn"}>
+                        <MenuItem onClick={handleAdminClick}>
+                            <MenuItem>
+                                <EngineeringIcon fontSize="small" />
+                            </MenuItem>
+                            管理員登入
                         </MenuItem>
                     </div>
                 )]}
@@ -261,41 +336,25 @@ export default function Navbar() {
                     <ProductSearch />
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
-                    <IconButton
-                            aria-label="cart"
-                            size="large"
-                            color="inherit"
-                            onClick={handleAdminMemberClick}>
-                            <AbcIcon />
-                        </IconButton>
-
+                        {adminMenu}
                         <IconButton
-                            aria-label="cart"
                             size="large"
-                            color="inherit"
-                            onClick={handleAdminOrderClick}>
-                            <AbcIcon />
-                        </IconButton>
-
-
-                        <IconButton
                             aria-label="cart"
-                            size="large"
                             color="inherit"
-                            onClick={handleAdminClick}>
+                            aria-haspopup="true"
+                            aria-controls={menuId}
+                            // onClick={handleAdminClick}>
+                            onClick={handleAdminMenuOpen}>
                             <EngineeringIcon />
                         </IconButton>
-
-
                         <IconButton
                             aria-label="cart"
                             size="large"
                             color="inherit"
+                            aria-controls={menuId}
                             onClick={handleCartClick}>
                             <ShoppingCartIcon />
                         </IconButton>
-
                         {renderMenu}
                         <IconButton
                             size="large"
