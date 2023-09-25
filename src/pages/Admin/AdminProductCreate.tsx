@@ -32,7 +32,7 @@ export default function AdminProductCreate() {
         Image: '',
         Description: '',
         CategoryId: '',
-        CategoryName: '',
+        // CategoryName: '',
     });
     const [formErrors, setFormErrors] = useState({
         ProductName: '',
@@ -40,7 +40,7 @@ export default function AdminProductCreate() {
         Image: '',
         Description: '',
         CategoryId: '',
-        CategoryName: '',
+        // CategoryName: '',
     });
     //傳送給後端得值要正確才會傳送
     const validateForm = () => {
@@ -50,7 +50,7 @@ export default function AdminProductCreate() {
             Image: '',
             Description: '',
             CategoryId: '',
-            CategoryName: '',
+            // CategoryName: '',
         };
         //開發者工具
         if (!formData.ProductName) {
@@ -66,11 +66,11 @@ export default function AdminProductCreate() {
             errors.Description = '請輸入商品內容';
         }
         if (!formData.CategoryId) {
-            errors.CategoryId = '請輸入商品分類ID';
+            errors.CategoryId = '請選擇商品分類';
         }
-        if (!formData.CategoryName) {
-            errors.CategoryName = '請輸入商品分類';
-        }
+        // if (!formData.CategoryName) {
+        //     errors.CategoryName = '請輸入商品分類';
+        // }
         setFormErrors(errors);
         // 如果有任何錯誤，返回false
         return Object.values(errors).every((error) => error === '');
@@ -106,14 +106,14 @@ export default function AdminProductCreate() {
                         break;
                       
             case 'Description':
-                errors.Description = value ? '' : '請輸入商品內容';
+                errors.Description = value ? '' : '請輸入商品描述';
                 break;
             case 'CategoryId':
-                errors.CategoryId = value ? '' : '請選擇商品分類ID';
+                errors.CategoryId = value ? '' : '請選擇商品分類';
                 break;
-            case 'CategoryName':
-                errors.CategoryName = value ? '' : '請選擇商品分類';
-                break;
+            // case 'CategoryName':
+            //     errors.CategoryName = value ? '' : '請選擇商品分類';
+            //     break;
 
             default:
                 break;
@@ -121,7 +121,33 @@ export default function AdminProductCreate() {
 
         setFormErrors(errors);
     };
-
+    const [selectedValue, setSelectedValue] = useState('1'); // 初始选择值
+    const handleChange = (event: { target: { value: any; }; }) => {
+        // 获取选择的值
+        const selectedOption = event.target.value;
+    
+        // 映射选择的值
+        let mappedValue;
+        switch (selectedOption) {
+          case '1':
+            mappedValue = '1';
+            break;
+          case '2':
+            mappedValue = '2';
+            break;
+          case '3':
+            mappedValue = '3';
+            break;
+          case '4':
+            mappedValue = '4';
+            break;
+          default:
+            mappedValue = ''; // 如果没有匹配的值，可以设置为默认值
+            break;
+        }
+    
+        setSelectedValue(mappedValue);
+      };
     const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
         const { name, value } = event.target;
         console.log(event.target.name)
@@ -139,7 +165,7 @@ export default function AdminProductCreate() {
             form.append('Image', formData.Image);
             form.append('Description', formData.Description);
             form.append('CategoryId', formData.CategoryId);
-            form.append('CategoryName', formData.CategoryName);
+            // form.append('CategoryName', formData.CategoryName);
             try {
                 const response = await fetch('https://localhost:44373/ProductCreate', {
                     method: 'POST',
@@ -216,7 +242,7 @@ export default function AdminProductCreate() {
                                     {formErrors.ProductPrice}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={6}>
+                            {/* <Grid item xs={6}>
                                 <Select
                                     label="商品分類"
                                     id="CategoryName"
@@ -225,9 +251,9 @@ export default function AdminProductCreate() {
                                     onChange={handleInputChange} // 当选择更改时触发的处理程序
                                     error={Boolean(formErrors.CategoryName)} // 如果有错误，则为true
                                     fullWidth
-                                >
+                                > */}
                                     {/* 这里是下拉选项，你可以根据需要添加更多 */}
-                                    <MenuItem value="1">3C</MenuItem>
+                                    {/* <MenuItem value="1">3C</MenuItem>
                                     <MenuItem value="2">美妝</MenuItem>
                                     <MenuItem value="3">服飾</MenuItem>
                                     <MenuItem value="4">生活用品</MenuItem>
@@ -235,8 +261,8 @@ export default function AdminProductCreate() {
                                 <Typography variant="caption" color="error">
                                     {formErrors.CategoryName}
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
+                            </Grid> */}
+                             <Grid item xs={6}>
                                 <Select
                                     label="商品分類ID"
                                     id="CategoryId"
@@ -247,15 +273,15 @@ export default function AdminProductCreate() {
                                     fullWidth
                                 >
                                     {/* 这里是下拉选项，你可以根据需要添加更多 */}
-                                    <MenuItem value="1">1</MenuItem>
-                                    <MenuItem value="2">2</MenuItem>
-                                    <MenuItem value="3">3</MenuItem>
-                                    <MenuItem value="4">4</MenuItem>
+                                    <MenuItem value="1">電子產品</MenuItem>
+                                    <MenuItem value="2">美妝</MenuItem>
+                                    <MenuItem value="3">服飾</MenuItem>
+                                    <MenuItem value="4">生活用品</MenuItem>
                                 </Select>
                                 <Typography variant="caption" color="error">
-                                    {formErrors.CategoryName}
+                                    {formErrors.CategoryId}
                                 </Typography>
-                            </Grid>
+                            </Grid> 
                             <Grid item xs={12}>
                                 <TextField
                                     margin="normal"
@@ -281,7 +307,7 @@ export default function AdminProductCreate() {
                                     required
                                     fullWidth
                                     id="Description"
-                                    label="請描述商品"
+                                    label="請描述商品(50字以內)"
                                     name="Description"
                                     autoComplete="Description"
                                     autoFocus

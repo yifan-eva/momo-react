@@ -31,7 +31,7 @@ export default function AppNavBar() {
     console.log("p", allCategories)
     interface Category {
         categoryName: string;
-        categoryId: number;
+        categoryId: string;
     }
 
     return (
