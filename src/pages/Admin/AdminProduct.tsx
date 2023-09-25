@@ -66,10 +66,24 @@ export default function AdminMember() {
     const amdinId = localStorage.getItem("admin")
     const [searchTerm, setSearchTerm] = useState('')
     const [productItems, setProductItems] = useState<Product[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 10;
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    const productsToDisplay = productItems.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(productItems.length / productsPerPage);
 
-    // const handleBackClick = (id: string) => {
-    //     navigate(`/AdminOrderItem?orderid=` + id); // 导航到指定的路由
-    // };
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
     const handleSearch = () => {
         // 使用filter方法篩選符合搜索條件的訂單
@@ -83,6 +97,7 @@ export default function AdminMember() {
                 String(product.status).toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
+        setCurrentPage(1);
         // 更新訂單列表
         setProductItems(filteredMembers);
     };
@@ -98,9 +113,11 @@ export default function AdminMember() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                console.log('order', data);
-                setProducts(data);
-                // 在数据加载完成后才执行相关操作
+                const sortedProducts = data.sort((a: { productId: string; }, b: { productId: string; }) => {
+                    return parseInt(b.productId) - parseInt(a.productId);
+                });
+
+                setProducts(sortedProducts);
             } catch (error) {
                 console.error('發生錯誤:', error);
             }
@@ -134,17 +151,13 @@ export default function AdminMember() {
 
             if (response.ok) {
                 console.log('提交成功');
-                // 更新本地状态以反映更改
+
                 setProducts(updatedProducts);
-                // 在请求成功时，可能执行一些其他操作
             } else {
                 console.error('請檢查填寫內容', Error);
-                // 在请求失败时，可能采取其他操作或显示错误消息
             }
         } catch (error) {
-            // 捕获异常并输出错误信息
             console.error('發生錯誤', error);
-            // 可能还需要采取其他操作，如显示网络错误消息
         }
     };
     const handleSubmit = () => {
@@ -227,12 +240,12 @@ export default function AdminMember() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {productItems.length === 0 ? (
+                            {productsToDisplay.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7}>找不到此項目</TableCell>
                                 </TableRow>
                             ) : (
-                                productItems.map((product) => (
+                                productsToDisplay.map((product) => (
                                     <TableRow key={product.productId}>
                                         <TableCell>
                                             {product.productId}
@@ -263,7 +276,27 @@ export default function AdminMember() {
                             )}
                         </TableBody>
                         <Toolbar>
-                            {/* ... 其他工具栏元素 ... */}
+                            <Button
+                                sx={{
+                                    py: 1,
+                                    marginRight: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handlePreviousPage}
+                            >
+                                上一頁
+                            </Button>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleNextPage}
+                            >
+                                下一頁
+                            </Button>
                             <Box sx={{ flexGrow: 1 }} /> {/* 使用 flexGrow 来填充工具栏的剩余空间 */}
                             <Button
                                 sx={{

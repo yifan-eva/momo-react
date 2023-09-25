@@ -1,15 +1,12 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, TableFooter, TableRow, TableCell, Radio, RadioGroup, FormLabel, TableContainer, Table, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid } from '@mui/material';
+import { Avatar, Box, Button, Container, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid } from '@mui/material';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
 
 export default function OrderCheck2() {
-    const location = useLocation();
     const navigate = useNavigate();
     const [search, setSearch] = useSearchParams();
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -101,7 +98,7 @@ export default function OrderCheck2() {
                             ))}
                         </TableBody>
                         <Button variant="outlined" color="primary" onClick={handleBackClick} style={{ marginTop: '20px', marginBottom: '10px' }}>
-                            {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 回到我的訂單
+                            {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 回到訂單資訊
                         </Button>
                     </Typography>
                 </TableContainer>

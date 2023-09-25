@@ -5,7 +5,7 @@ import CardOverflow from '@mui/joy/CardOverflow';
 import Link from '@mui/joy/Link';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { useEffect, useState } from 'react';
-import { Container, Grid, Snackbar } from '@mui/material';
+import { Container, Grid, Pagination, Snackbar, Toolbar } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -13,7 +13,11 @@ export default function ProductCard() {
   // const [state, dispatch] = useContext(CartContext);
   const [search, setSearch] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(9); // 每页显示的商品数量
+  const totalPages = Math.ceil(products.length / productsPerPage);
   const location = useLocation();
+
   useEffect(() => {
     const categoryId = search.get("categoryId");
     const keyword = search.get("keyword");
@@ -43,6 +47,22 @@ export default function ProductCard() {
       });
   }, [location]);
 
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+    }
+};
+
+const handlePreviousPage = () => {
+    if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+    }
+};
+
   console.log("p", products)
   interface Product {
     productId: number;
@@ -53,7 +73,6 @@ export default function ProductCard() {
     status: string;
   }
 
-  // const [selectedQuantities, setSelectedQuantities] = useState([]);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const userId = localStorage.getItem('userId');
@@ -73,8 +92,6 @@ export default function ProductCard() {
           method: 'POST',
           body: cartItem,
         });
-
-        // if (response.ok) {
         const result = await response.json();
         if (response.ok) {
           setSnackbarMessage(`成功將 ${product.productName} 添加到購物車`);
@@ -83,9 +100,6 @@ export default function ProductCard() {
           setSnackbarMessage(`加入購物車失敗: ${result.errorMessage}`);
           setSnackbarOpen(true);
         }
-        // } else {
-        //   throw new Error('网络请求失败');
-        // }
       } else {
         alert('請先登錄以添加產品到購物車。');
         navigate('/login');
@@ -99,69 +113,91 @@ export default function ProductCard() {
   return (
     //與上方的距離
     <Container sx={{ py: 4 }} maxWidth="md">
-      {/* End hero unit */}
       {/* 每個項目上下左右間距 */}
       <Grid container spacing={8}>
-        {products.map((product) => (
-          product.status === "off" ? null : (
-        <Grid item key={product.productId} xs={12} sm={6} md={4}>
-          <Card sx={{
-            height: '100%', display: 'flex', flexDirection: 'column',
-            maxWidth: '100%', boxShadow: 'lg'
-          }}>
-            <CardOverflow sx={{ height: '150' }}>
-              {/* <AspectRatio sx={{ minWidth: 200 }}> */}
-              <img
-                src={product.image}
-                // srcSet="https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286&dpr=2 2x"
-                loading="lazy"
-                alt=""
-                style={{
-                  objectFit: 'cover',
-                  width: '100%',
-                  height: '150%'
-                }}
-              />
-              {/* </AspectRatio> */}
-            </CardOverflow>
-            <CardContent>
-              {/* <Typography level="body-xs">{product.productName}</Typography> */}
-              <Link
-                href={`/Demo/ProductProfile?productId=${product.productId}`}
-                fontWeight="md"
-                color="neutral"
-                textColor="text.primary"
-                overlay
-                endDecorator={<ArrowOutwardIcon />}
-              >
-                {product.productName}
-              </Link>
-              <br />
-              ${product.productPrice}
-              <br />
-            </CardContent>
-            <CardOverflow>
-              <Button variant="solid" color="primary" size="lg"
-                onClick={() => handleAddToCart(product)}>
-                {<ShoppingCartIcon />} 加入購物車
-              </Button>
-              <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarOpen(false)}
-                message={snackbarMessage}
-                sx={{
-                  '& .MuiSnackbarContent-root': {
-                    backgroundColor: 'green',
-                    boxShadow: 'none',
-                  },
-                }}
-              />
-            </CardOverflow>
-          </Card>
-        </Grid>
-       )))}
+        {currentProducts.map((product) => (
+          <Grid item key={product.productId} xs={12} sm={6} md={4}>
+            <Card sx={{
+              height: '100%', display: 'flex', flexDirection: 'column',
+              maxWidth: '100%', boxShadow: 'lg'
+            }}>
+              <CardOverflow sx={{ height: '150' }}>
+                <img
+                  src={product.image}
+                  loading="lazy"
+                  alt=""
+                  style={{
+                    objectFit: 'cover',
+                    width: '100%',
+                    height: '150%'
+                  }}
+                />
+              </CardOverflow>
+              <CardContent>
+                <Link
+                  href={`/Demo/ProductProfile?productId=${product.productId}`}
+                  fontWeight="md"
+                  color="neutral"
+                  textColor="text.primary"
+                  overlay
+                  endDecorator={<ArrowOutwardIcon />}
+                >
+                  {product.productName}
+                </Link>
+                <br />
+                ${product.productPrice}
+                <br />
+              </CardContent>
+              <CardOverflow>
+                <Button variant="solid" color="primary" size="lg"
+                  onClick={() => handleAddToCart(product)}>
+                  {<ShoppingCartIcon />} 加入購物車
+                </Button>
+                <Snackbar
+                  open={snackbarOpen}
+                  autoHideDuration={3000}
+                  onClose={() => setSnackbarOpen(false)}
+                  message={snackbarMessage}
+                  sx={{
+                    '& .MuiSnackbarContent-root': {
+                      backgroundColor: 'green',
+                      boxShadow: 'none',
+                    },
+                  }}
+                />
+              </CardOverflow>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
+      <Pagination
+        count={Math.ceil(products.length / productsPerPage)}
+        page={currentPage}
+        onChange={(event, page) => setCurrentPage(page)}
+      />
+      <Toolbar>
+        <Button
+          sx={{
+            py: 1,
+            marginRight: 1,
+          }}
+          variant="outlined"
+          color="primary"
+          onClick={handlePreviousPage}
+        >
+          上一頁
+        </Button>
+        <Button
+          sx={{
+            py: 1,
+          }}
+          variant="outlined"
+          color="primary"
+          onClick={handleNextPage}
+        >
+          下一頁
+        </Button>
+        </Toolbar>
     </Container>
 
   );

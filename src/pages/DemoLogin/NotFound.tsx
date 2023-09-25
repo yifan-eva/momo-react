@@ -24,7 +24,7 @@ function DemoLogin() {
           <Box component='form' noValidate sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12}>
-                <h1>請先登入</h1>
+                <h1>找不到此頁面</h1>
               </Grid>
             </Grid>
           </Box>

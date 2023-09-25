@@ -19,8 +19,8 @@ import { Link, Link as RouterLink, useNavigate } from 'react-router-dom';
 import ProductSearch from './Search';
 import AppNavBar from './AppNavBar';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import AbcIcon from '@mui/icons-material/Abc';
-import { useState } from 'react';
+import FaceIcon from '@mui/icons-material/Face';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 export default function Navbar() {
     //左邊欄位打開方法
@@ -160,7 +160,7 @@ export default function Navbar() {
     };
 
     const handleLoggout = () => {
-        alert('帳號以登出，跳回首頁')
+        alert('帳號已登出，跳回首頁')
         localStorage.removeItem('userId');
         localStorage.removeItem('admin')
         localStorage.removeItem('token')
@@ -243,22 +243,16 @@ export default function Navbar() {
                 [(
                     <div key={"loggedIn"}>
                         <MenuItem onClick={handleAdminMemberClick}>
-                            <MenuItem>
-                                <AbcIcon fontSize="small" />
-                            </MenuItem>
                             會員管理
                         </MenuItem>
                         <MenuItem onClick={handleAdminOrderClick}>
-                            <MenuItem>
-                                <AbcIcon fontSize="small" />
-                            </MenuItem>
                             訂單管理
                         </MenuItem>
                         <MenuItem onClick={handleAdminProductClick}>
-                            <MenuItem>
-                                <AbcIcon fontSize="small" />
-                            </MenuItem>
                             商品管理
+                        </MenuItem>
+                        <MenuItem component={RouterLink} to="/" onClick={handleLoggout}>
+                            登出
                         </MenuItem>
                     </div>
 
@@ -267,11 +261,9 @@ export default function Navbar() {
                 : [(
                     <div key={"UnLoggedIn"}>
                         <MenuItem onClick={handleAdminClick}>
-                            <MenuItem>
-                                <EngineeringIcon fontSize="small" />
-                            </MenuItem>
                             管理員登入
                         </MenuItem>
+
                     </div>
                 )]}
         </Menu>
@@ -337,36 +329,68 @@ export default function Navbar() {
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         {adminMenu}
-                        <IconButton
-                            size="large"
-                            aria-label="cart"
-                            color="inherit"
-                            aria-haspopup="true"
-                            aria-controls={menuId}
-                            // onClick={handleAdminClick}>
-                            onClick={handleAdminMenuOpen}>
-                            <EngineeringIcon />
-                        </IconButton>
-                        <IconButton
-                            aria-label="cart"
-                            size="large"
-                            color="inherit"
-                            aria-controls={menuId}
-                            onClick={handleCartClick}>
-                            <ShoppingCartIcon />
-                        </IconButton>
+                        {isAdminLoggin ? (
+                            <IconButton
+                                size="large"
+                                aria-label="cart"
+                                color="inherit"
+                                aria-haspopup="true"
+                                aria-controls={menuId}
+                                onClick={handleAdminMenuOpen}
+                            >
+                                <ManageAccountsIcon />
+                            </IconButton>
+                        ) : (
+                            <IconButton
+                                size="large"
+                                aria-label="cart"
+                                color="inherit"
+                                aria-haspopup="true"
+                                aria-controls={menuId}
+                                onClick={handleAdminMenuOpen}
+                            >
+                                <EngineeringIcon />
+                            </IconButton>
+                        )}
+
+                        {isLoggedIn && ( // 只有在用户已登录时才显示购物车图标
+                            <IconButton
+                                aria-label="cart"
+                                size="large"
+                                color="inherit"
+                                aria-controls={menuId}
+                                onClick={handleCartClick}
+                            >
+                                <ShoppingCartIcon />
+                            </IconButton>
+                        )}
+
                         {renderMenu}
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
+                        {isLoggedIn ? ( 
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-controls={menuId}
+                                aria-haspopup="true"
+                                onClick={handleProfileMenuOpen}
+                                color="inherit"
+                            >
+                                <FaceIcon /> 
+                            </IconButton>
+                        ) : (
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-controls={menuId}
+                                aria-haspopup="true"
+                                onClick={handleProfileMenuOpen}
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        )}
                     </Box>
                     {renderMobileMenu}
 

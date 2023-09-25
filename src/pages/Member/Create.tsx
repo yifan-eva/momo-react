@@ -5,12 +5,12 @@ import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export function MemberCreate() {
   const [formData, setFormData] = useState({
@@ -187,7 +187,7 @@ export function MemberCreate() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
+            <PersonAddIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             註冊會員
@@ -281,7 +281,7 @@ export function MemberCreate() {
               required
               fullWidth
               name="Birth"
-              helperText="會員生日"
+              helperText="會員生日*"
               type="date"
               id="Birth"
               onChange={(e) => {

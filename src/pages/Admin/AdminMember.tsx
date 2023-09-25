@@ -1,11 +1,12 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem } from '@mui/material';
+import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, Toolbar } from '@mui/material';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
+import RecentActorsIcon from '@mui/icons-material/RecentActors';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -63,10 +64,24 @@ export default function AdminMember() {
     const amdinId = localStorage.getItem("admin")
     const [searchTerm, setSearchTerm] = useState('')
     const [memberItems, setMemberItems] = useState<Member[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const membersPerPage = 10;
+    const startIndex = (currentPage - 1) * membersPerPage;
+    const endIndex = startIndex + membersPerPage;
+    const membersToDisplay = memberItems.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(memberItems.length / membersPerPage);
 
-    // const handleBackClick = (id: string) => {
-    //     navigate(`/AdminOrderItem?orderid=` + id); // 导航到指定的路由
-    // };
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
     const handleSearch = () => {
         // 使用filter方法篩選符合搜索條件的訂單
@@ -82,6 +97,7 @@ export default function AdminMember() {
         });
         // 更新訂單列表
         setMemberItems(filteredMembers);
+        setCurrentPage(1);
     };
 
     useEffect(() => {
@@ -125,16 +141,16 @@ export default function AdminMember() {
         const formData = new FormData();
         formData.append('UserId', memberId);
         formData.append('Status', updatedMembers.find((member) => member.userId === memberId)?.status || '');
-    
+
         try {
             const response = await fetch('https://localhost:44373/MemberEdit/UserStatus', {
                 method: 'POST',
                 body: formData,
             });
-            
+
             if (response.ok) {
                 console.log('提交成功');
-                alert('更新成功');
+                // alert('更新成功');
                 // 更新本地状态以反映更改
                 setMembers(updatedMembers);
                 // 在请求成功时，可能执行一些其他操作
@@ -148,8 +164,8 @@ export default function AdminMember() {
             // 可能还需要采取其他操作，如显示网络错误消息
         }
     };
-    
-    
+
+
     //判斷是否登入
     useEffect(() => {
         if (!amdinId) {
@@ -181,7 +197,7 @@ export default function AdminMember() {
                             }}
                         >
                             < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                                <ListAltIcon />
+                                <RecentActorsIcon />
                             </Avatar>
                             <Typography component="h1" variant="h5">
                                 會員資料
@@ -226,12 +242,12 @@ export default function AdminMember() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {memberItems.length === 0 ? (
+                            {membersToDisplay.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7}>找不到此項目</TableCell>
                                 </TableRow>
                             ) : (
-                                memberItems.map((member) => (
+                                membersToDisplay.map((member) => (
                                     <TableRow key={member.userId}>
                                         <TableCell>
                                             {member.userId}
@@ -253,10 +269,10 @@ export default function AdminMember() {
                                         </TableCell>
                                         <TableCell>
                                             <Button
-                                                variant= 'outlined'
+                                                variant='outlined'
                                                 color={member.status === 'BLOCK' ? 'error' : 'primary'}
                                                 onClick={() => handleSubmit(member.userId)}
-                                                >
+                                            >
                                                 {member.status}
                                             </Button>
                                         </TableCell>
@@ -264,6 +280,29 @@ export default function AdminMember() {
                                 ))
                             )}
                         </TableBody>
+                        <Toolbar>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                    marginRight: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handlePreviousPage}
+                            >
+                                上一頁
+                            </Button>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleNextPage}
+                            >
+                                下一頁
+                            </Button>
+                        </Toolbar>
                     </Typography>
                 </TableContainer>
             </Grid >

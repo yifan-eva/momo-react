@@ -5,6 +5,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+
 //搜尋欄
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -49,6 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function ProductSearch() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('')
+   
     const handleSearch = async () => {
         try {
             // 向后端 API 发送搜索请求
@@ -80,11 +82,6 @@ export default function ProductSearch() {
                 style={{ cursor: 'pointer' }}
                 role="button"
                 tabIndex={0}
-            // onKeyPress={(e) => {
-            //     if (e.key === 'Enter') {
-            //         handleSearch();
-            //     }
-            // }} 
             />
         </>
     )

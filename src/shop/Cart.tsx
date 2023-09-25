@@ -1,4 +1,4 @@
-import { Button, TableCell, TableContainer, Table, TableHead, TableBody, TableRow, Select, MenuItem, Typography, TableFooter, Container } from '@mui/material';
+import { Button, TableCell, TableContainer, Table, TableHead, TableBody, TableRow, Select, MenuItem, Typography, TableFooter, Container, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ interface CartItem {
     productName: string;
     productPrice: number;
     quantity: number;
-
 }
 export default function Cart() {
     const userId = localStorage.getItem('userId');
@@ -124,76 +123,96 @@ export default function Cart() {
 
     return (
         <Container sx={{ py: 8 }} maxWidth="md">
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell></TableCell>
-                            <TableCell>商品</TableCell>
-                            <TableCell>數量</TableCell>
-                            <TableCell>小計</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {cartData.map((item: any) => (
+            {cartData.length === 0 ? (
+                <Container component="main" maxWidth="xs"
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        paddingTop: '64px'
+                    }}>
+                    <Typography variant="h5">目前購物車沒有東西喔!</Typography>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleBackClick}
+                        style={{ marginTop: '16px' }}>
+                        {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
+                    </Button>
+                </Container>
+            ) : (
+                <TableContainer>
+                    <Table>
+                        <TableHead>
                             <TableRow>
-                                {/* <TableRow key={item.productId}> */}
-                                <TableCell>
-                                    <Button
-                                        variant="outlined"
-                                        color="error"
-                                        onClick={() => removeCartItem(item.userId, item.productId)}
-                                    >
-                                        x
+                                <TableCell></TableCell>
+                                <TableCell>商品</TableCell>
+                                <TableCell>數量</TableCell>
+                                <TableCell>小計</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {cartData.map((item: any) => (
+                                <TableRow>
+                                    {/* <TableRow key={item.productId}> */}
+                                    <TableCell>
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            onClick={() => removeCartItem(item.userId, item.productId)}
+                                        >
+                                            x
+                                        </Button>
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.productName}
+                                        <br />
+                                        <Typography variant="body2" color="textSecondary">
+                                            NT$
+                                            {item.productPrice.toFixed(2)}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Select
+                                            value={itemQuantities[item.productId]} // 使用存储在对象中的数量
+                                            onChange={(e) => handleQuantityChange(e, item.userId, item.productId)} // 传递唯一标识
+                                        >
+                                            {[...Array(20)].map((_, i) => (
+                                                <MenuItem value={i + 1} key={i}>
+                                                    {i + 1}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell className="text-end">
+                                        NT$
+                                        {(item.productPrice * item.quantity).toFixed(2)}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TableCell colSpan={1}>
+                                    <Button variant="outlined" color="primary" onClick={handleBackClick}>
+                                        {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
                                     </Button>
                                 </TableCell>
-                                <TableCell>
-                                    {item.productName}
-                                    <br />
-                                    <Typography variant="body2" color="textSecondary">
-                                        NT$
-                                        {item.productPrice.toFixed(2)}
-                                    </Typography>
+                                <TableCell colSpan={2} sx={{ textAlign: 'right', fontSize: '18px' }}>
+                                    總金額 NT$
+                                    {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0).toFixed(2)}
                                 </TableCell>
-                                <TableCell>
-                                    <Select
-                                        value={itemQuantities[item.productId]} // 使用存储在对象中的数量
-                                        onChange={(e) => handleQuantityChange(e, item.userId, item.productId)} // 传递唯一标识
-                                    >
-                                        {[...Array(20)].map((_, i) => (
-                                            <MenuItem value={i + 1} key={i}>
-                                                {i + 1}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </TableCell>
-                                <TableCell className="text-end">
-                                    NT$
-                                    {(item.productPrice * item.quantity).toFixed(2)}
+                                <TableCell colSpan={1}>
+                                    <Button variant="contained" color="primary" onClick={handleShopClick}>
+                                        我要購買
+                                    </Button>
                                 </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={1}>
-                                <Button variant="outlined" color="primary" onClick={handleBackClick}>
-                                    {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
-                                </Button>
-                            </TableCell>
-                            <TableCell colSpan={2} sx={{ textAlign: 'right', fontSize: '18px' }}>
-                                總金額 NT$
-                                {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0).toFixed(2)}
-                            </TableCell>
-                            <TableCell colSpan={1}>
-                                <Button variant="contained" color="primary" onClick={handleShopClick}>
-                                    我要購買
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
-                </Table>
-            </TableContainer>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
+            )}
         </Container>
     );
 }

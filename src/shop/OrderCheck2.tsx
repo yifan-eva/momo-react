@@ -57,11 +57,14 @@ export default function OrderCheck2() {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-
                 const data = await response.json();
-                console.log('data', data);
-                setOrders(data);
-                // 在数据加载完成后才执行相关操作
+
+                // 依照orderId降冪排列
+                const sortedData = [...data].sort((a, b) => {
+                    // 將orderId分析為數字，然後按數字降冪排列
+                    return parseInt(b.orderId) - parseInt(a.orderId);
+                });
+                setOrders(sortedData);
             } catch (error) {
                 console.error('發生錯誤:', error);
             }
@@ -69,7 +72,7 @@ export default function OrderCheck2() {
         fetchData();
     }, []);
 
-    
+
 
     return (
         <Container component="main" sx={{ py: 8 }} maxWidth="md">

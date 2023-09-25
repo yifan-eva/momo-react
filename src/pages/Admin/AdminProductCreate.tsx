@@ -15,7 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useState } from 'react';
-import { MenuItem, Select } from '@mui/material';
+import { InputLabel, MenuItem, Select } from '@mui/material';
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -32,7 +32,6 @@ export default function AdminProductCreate() {
         Image: '',
         Description: '',
         CategoryId: '',
-        // CategoryName: '',
     });
     const [formErrors, setFormErrors] = useState({
         ProductName: '',
@@ -40,7 +39,6 @@ export default function AdminProductCreate() {
         Image: '',
         Description: '',
         CategoryId: '',
-        // CategoryName: '',
     });
     //傳送給後端得值要正確才會傳送
     const validateForm = () => {
@@ -50,7 +48,6 @@ export default function AdminProductCreate() {
             Image: '',
             Description: '',
             CategoryId: '',
-            // CategoryName: '',
         };
         //開發者工具
         if (!formData.ProductName) {
@@ -68,9 +65,6 @@ export default function AdminProductCreate() {
         if (!formData.CategoryId) {
             errors.CategoryId = '請選擇商品分類';
         }
-        // if (!formData.CategoryName) {
-        //     errors.CategoryName = '請輸入商品分類';
-        // }
         setFormErrors(errors);
         // 如果有任何錯誤，返回false
         return Object.values(errors).every((error) => error === '');
@@ -111,43 +105,13 @@ export default function AdminProductCreate() {
             case 'CategoryId':
                 errors.CategoryId = value ? '' : '請選擇商品分類';
                 break;
-            // case 'CategoryName':
-            //     errors.CategoryName = value ? '' : '請選擇商品分類';
-            //     break;
-
             default:
                 break;
         }
 
         setFormErrors(errors);
     };
-    const [selectedValue, setSelectedValue] = useState('1'); // 初始选择值
-    const handleChange = (event: { target: { value: any; }; }) => {
-        // 获取选择的值
-        const selectedOption = event.target.value;
-    
-        // 映射选择的值
-        let mappedValue;
-        switch (selectedOption) {
-          case '1':
-            mappedValue = '1';
-            break;
-          case '2':
-            mappedValue = '2';
-            break;
-          case '3':
-            mappedValue = '3';
-            break;
-          case '4':
-            mappedValue = '4';
-            break;
-          default:
-            mappedValue = ''; // 如果没有匹配的值，可以设置为默认值
-            break;
-        }
-    
-        setSelectedValue(mappedValue);
-      };
+
     const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
         const { name, value } = event.target;
         console.log(event.target.name)
@@ -204,7 +168,7 @@ export default function AdminProductCreate() {
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} >
                                 <TextField
                                     margin="normal"
                                     required
@@ -223,7 +187,7 @@ export default function AdminProductCreate() {
                                     {formErrors.ProductName}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} >
                                 <TextField
                                     margin="normal"
                                     required
@@ -242,29 +206,10 @@ export default function AdminProductCreate() {
                                     {formErrors.ProductPrice}
                                 </Typography>
                             </Grid>
-                            {/* <Grid item xs={6}>
+                             <Grid item xs={12} >
+                             <InputLabel htmlFor="CategoryId">商品分類*</InputLabel>
                                 <Select
                                     label="商品分類"
-                                    id="CategoryName"
-                                    name="CategoryName"
-                                    value={formData.CategoryName} // 用于选择的值
-                                    onChange={handleInputChange} // 当选择更改时触发的处理程序
-                                    error={Boolean(formErrors.CategoryName)} // 如果有错误，则为true
-                                    fullWidth
-                                > */}
-                                    {/* 这里是下拉选项，你可以根据需要添加更多 */}
-                                    {/* <MenuItem value="1">3C</MenuItem>
-                                    <MenuItem value="2">美妝</MenuItem>
-                                    <MenuItem value="3">服飾</MenuItem>
-                                    <MenuItem value="4">生活用品</MenuItem>
-                                </Select>
-                                <Typography variant="caption" color="error">
-                                    {formErrors.CategoryName}
-                                </Typography>
-                            </Grid> */}
-                             <Grid item xs={6}>
-                                <Select
-                                    label="商品分類ID"
                                     id="CategoryId"
                                     name="CategoryId"
                                     value={formData.CategoryId} // 用于选择的值

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem } from '@mui/material';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, Toolbar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -65,6 +66,25 @@ export default function AdminMember() {
     const amdinId = localStorage.getItem("admin")
     const [searchTerm, setSearchTerm] = useState('')
     const [orderItems, setOrderItems] = useState<Order[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 10;
+    const startIndex = (currentPage - 1) * ordersPerPage;
+    const endIndex = startIndex + ordersPerPage;
+    const ordersToDisplay = orderItems.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(orderItems.length / ordersPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
 
     const handleBackClick = (id: string) => {
         navigate(`/AdminOrderItem?orderid=` + id); // 导航到指定的路由
@@ -78,12 +98,13 @@ export default function AdminMember() {
                 String(order.userId).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(order.place).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(order.pay).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(order.status).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(order.orderDate).toLowerCase().includes(searchTerm.toLowerCase())
+                String(order.status).toLowerCase().includes(searchTerm.toLowerCase())
+                // String(order.orderDate).toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
         // 更新訂單列表
         setOrderItems(filteredOrders);
+        setCurrentPage(1);
     };
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
@@ -132,53 +153,14 @@ export default function AdminMember() {
 
                 console.log(orders)
                 console.log(updatedOrders);
-
                 setOrders(updatedOrders);
 
-                console.log('订单状态已更新');
+                console.log('訂單狀態已更新');
             }
         } catch (error) {
             console.error('更新订单状态时发生错误:', error);
         }
     };
-
-
-    // const handleStatusChange = async (orderId: string , newStatus: string) => {
-    //     try {
-    //         // 创建一个对象来表示要发送的数据
-    //         const data = {
-    //             orderId: orderId,
-    //             status: newStatus,
-    //         };
-
-    //         // 发送POST请求到后端以更新订单状态
-    //         const response = await fetch('https://localhost:44373/orders/OrderStatus', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json', // 设置请求头
-    //             },
-    //             body: JSON.stringify(data), // 将数据转换为 JSON 字符串
-    //         });
-
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-
-    //         // 更新前端的订单状态
-    //         const updatedOrders = orders.map((order) => {
-    //             if (order.userId === userId) {
-    //                 order.status = newStatus;
-    //             }
-    //             return order;
-    //         });
-
-    //         setOrders(updatedOrders);
-
-    //         console.log('订单状态已更新');
-    //     } catch (error) {
-    //         console.error('更新订单状态时发生错误:', error);
-    //     }
-    // };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -191,9 +173,13 @@ export default function AdminMember() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                console.log('order', data);
-                setOrders(data);
-                // 在数据加载完成后才执行相关操作
+
+                // 按订单ID降序排列
+                const sortedData = [...data].sort((a, b) => {
+                    // 将订单ID解析为数字，然后按数字降序排列
+                    return parseInt(b.orderId) - parseInt(a.orderId);
+                });
+                setOrders(sortedData);
             } catch (error) {
                 console.error('發生錯誤:', error);
             }
@@ -233,10 +219,10 @@ export default function AdminMember() {
                             }}
                         >
                             < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                                <ListAltIcon />
+                                <ReceiptLongIcon />
                             </Avatar>
                             <Typography component="h1" variant="h5">
-                                訂單詳細資訊
+                                訂單資訊
                             </Typography>
                         </Box>
                     </TableCell>
@@ -278,12 +264,12 @@ export default function AdminMember() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {orderItems.length === 0 ? (
+                            {ordersToDisplay.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7}>找不到此項目</TableCell>
                                 </TableRow>
                             ) : (
-                                orderItems.map((order) => (
+                                ordersToDisplay.map((order) => (
                                     <TableRow key={order.orderId}>
                                         <TableCell>
                                             {order.orderId}
@@ -323,6 +309,29 @@ export default function AdminMember() {
                                 ))
                             )}
                         </TableBody>
+                        <Toolbar>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                    marginRight: 1, 
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handlePreviousPage}
+                            >
+                                上一頁
+                            </Button>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleNextPage}
+                            >
+                                下一頁
+                            </Button>
+                        </Toolbar>
                     </Typography>
                 </TableContainer>
             </Grid >
