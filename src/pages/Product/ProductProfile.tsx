@@ -10,33 +10,17 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-
-const defaultTheme = createTheme();
-
 export default function ProductCard() {
-    const [search, setSearch] = useSearchParams();
+    const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
-    const handleButtonClick = () => {
-        navigate('/Product'); // 导航到指定的路由
-    };
+    const [search, setSearch] = useSearchParams();
     const [product, setProduct] = useState<Product | null>(null);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-    useEffect(() => {
-        console.log('bb', search.get("productId"));
-        fetch('https://localhost:44373/ProductProfile/' + search.get("productId"))
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-                setProduct(data)
-            })
-            .catch(error => {
-                console.error('發稱錯誤:', error);
-            });
-    }, []);
-
-    // useEffect(() => {
-    //     console.log(product)
-    // }, [product]);
+    const handleButtonClick = () => {
+        navigate('/Product');
+    };
 
     interface Product {
         productId: number;
@@ -46,9 +30,7 @@ export default function ProductCard() {
         productPrice: number;
         description: string
     }
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const userId = localStorage.getItem('userId');
+
 
     const handleAddToCart = async (product: Product) => {
         try {
@@ -65,19 +47,16 @@ export default function ProductCard() {
                     body: cartItem,
                 });
                 // if (respnse.ok) {
-                    if (response.ok) {
-                        setSnackbarMessage(`成功將 ${product.productName} 添加到購物車`);
-                        setSnackbarOpen(true);
-                        console.log("1",snackbarMessage)
-                        console.log("2",snackbarOpen)
-                    } else {
-                        const result = await response.json();
-                        setSnackbarMessage(`加入購物車失敗: ${result.errorMessage}`);
-                        setSnackbarOpen(true);
-                    }
-                // } else {
-                //     throw new Error('网络请求失败');
-                // }
+                if (response.ok) {
+                    setSnackbarMessage(`成功將 ${product.productName} 添加到購物車`);
+                    setSnackbarOpen(true);
+                    console.log("1", snackbarMessage)
+                    console.log("2", snackbarOpen)
+                } else {
+                    const result = await response.json();
+                    setSnackbarMessage(`加入購物車失敗: ${result.errorMessage}`);
+                    setSnackbarOpen(true);
+                }
             } else {
                 alert('請先登錄以添加產品到購物車。');
                 navigate('/login');
@@ -87,6 +66,20 @@ export default function ProductCard() {
             setSnackbarOpen(true);
         }
     };
+
+    useEffect(() => {
+        console.log('bb', search.get("productId"));
+        fetch('https://localhost:44373/ProductProfile/' + search.get("productId"))
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                setProduct(data)
+            })
+            .catch(error => {
+                console.error('發稱錯誤:', error);
+            });
+    }, []);
+
     return (
         <Container sx={{ py: 2 }} maxWidth="md">
             {product && (
@@ -102,7 +95,7 @@ export default function ProductCard() {
                             style={{
                                 objectFit: 'cover',
                                 width: '100%',
-                                height: '100%' // 调整图片高度
+                                height: '100%'
                             }}
                         />
                         <br />
@@ -131,12 +124,11 @@ export default function ProductCard() {
                 message={snackbarMessage}
                 sx={{
                     '& .MuiSnackbarContent-root': {
-                      backgroundColor: 'green', 
-                      boxShadow: 'none',
+                        backgroundColor: 'green',
+                        boxShadow: 'none',
                     },
-                  }}
+                }}
             />
-            
         </Container >
     );
 }

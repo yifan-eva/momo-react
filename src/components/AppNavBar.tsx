@@ -1,13 +1,11 @@
 import * as React from 'react';
-import MailIcon from '@mui/icons-material/Mail';
-import { Accordion, AccordionDetails, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, } from '@mui/material';
-import Divider from '@mui/material/Divider';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
+import CategoryIcon from '@mui/icons-material/Category';
 import { useEffect, useState } from 'react';
+import { Accordion, AccordionDetails, Link } from '@mui/material';
+
 //功能欄中的選單
-
 export default function AppNavBar() {
-
     const [expanded, setExpanded] = useState<string | false>(false);
     const [allCategories, setAllCategories] = useState<Category[]>([]);
 
@@ -39,25 +37,26 @@ export default function AppNavBar() {
             <Accordion expanded={expanded === 'panel1'} onChange={AccordionHandleChange('panel1')}>
                 <AccordionDetails>
                     <div>
+                        {/* 取出全部的商品 */}
                         <div key={""}>
                             <Link href={`/Demo/ProductCategory?categoryId=${""}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', padding: '2px' }}>
                                     <div style={{ marginRight: '8px' }}>
                                         {<InboxIcon />}
-                                        {/* {category.icon ? <IconComponent /> : <MailIcon />} */}
                                     </div>
                                     <div>{"All"}</div>
                                 </div>
                             </Link>
                             <hr />
                         </div>
+                        {/* 分類的商品選單 */}
                         {allCategories.map((category, index) => (
                             <div key={category.categoryId}>
                                 <Link href={`/Demo/ProductCategory?categoryId=${category.categoryId}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', padding: '2px' }}>
                                         <div style={{ marginRight: '8px' }}>
-                                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                            {/* {category.icon ? <IconComponent /> : <MailIcon />} */}
+                                            <CategoryIcon/>
+                                            {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
                                         </div>
                                         <div>{category.categoryName}</div>
                                     </div>

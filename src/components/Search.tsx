@@ -53,7 +53,6 @@ export default function ProductSearch() {
    
     const handleSearch = async () => {
         try {
-            // 向后端 API 发送搜索请求
             navigate(`ProductCategory?keyword=${searchTerm}`)
         } catch (error) {
             console.error('發生錯誤:', error);

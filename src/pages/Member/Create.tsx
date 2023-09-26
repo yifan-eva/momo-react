@@ -65,7 +65,6 @@ export function MemberCreate() {
       errors.Phone = '請輸入會員電話';
     }
     setFormErrors(errors);
-    // 如果有任何錯誤，返回false
     return Object.values(errors).every((error) => error === '');
   };
   //畫面呈現
@@ -130,7 +129,6 @@ export function MemberCreate() {
       default:
         break;
     }
-
     setFormErrors(errors);
   };
 
@@ -172,161 +170,157 @@ export function MemberCreate() {
       }
     }
   };
-  // 主題的設置
-  const defaultTheme = createTheme();
+
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <PersonAddIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            註冊會員
+
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <PersonAddIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          註冊會員
+        </Typography>
+        <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="UserId"
+            label="會員帳號"
+            name="UserId"
+            autoComplete="id"
+            autoFocus
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.UserId}
           </Typography>
-          {/* onSubmit={handleSubmit} */}
-          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="UserId"
-              label="會員帳號"
-              name="UserId"
-              autoComplete="id"
-              autoFocus
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.UserId}
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="UserPwd"
-              label="會員密碼"
-              type="password"
-              id="UserPwd"
-              autoComplete="current-password"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.UserPwd}
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="RUserPwd"
-              label="確認密碼"
-              type="password"
-              id="RUserPwd"
-              autoComplete="current-password"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.RUserPwd}
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="UserName"
-              label="會員名稱"
-              id="UserName"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.UserName}
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="Email"
-              label="電子郵件"
-              type="email"
-              id="Email"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.Email}
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="Birth"
-              helperText="會員生日*"
-              type="date"
-              id="Birth"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.Birth}
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="Phone"
-              label="會員電話"
-              type="number"
-              id="Phone"
-              onChange={(e) => {
-                handleInputChange(e);
-                handleInputValidation(e);
-              }}
-            />
-            <Typography variant="caption" color="error">
-              {formErrors.Phone}
-            </Typography>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            // onClick={handleSubmit}
-            >
-              註冊
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/Demo/Login" variant="body2">
-                  {"已經有帳號了?那快來登入吧!"}
-                </Link>
-              </Grid>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="UserPwd"
+            label="會員密碼"
+            type="password"
+            id="UserPwd"
+            autoComplete="current-password"
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.UserPwd}
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="RUserPwd"
+            label="確認密碼"
+            type="password"
+            id="RUserPwd"
+            autoComplete="current-password"
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.RUserPwd}
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="UserName"
+            label="會員名稱"
+            id="UserName"
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.UserName}
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="Email"
+            label="電子郵件"
+            type="email"
+            id="Email"
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.Email}
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="Birth"
+            helperText="會員生日*"
+            type="date"
+            id="Birth"
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.Birth}
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="Phone"
+            label="會員電話"
+            type="number"
+            id="Phone"
+            onChange={(e) => {
+              handleInputChange(e);
+              handleInputValidation(e);
+            }}
+          />
+          <Typography variant="caption" color="error">
+            {formErrors.Phone}
+          </Typography>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            註冊
+          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Link href="/Demo/Login" variant="body2">
+                {"已經有帳號了?那快來登入吧!"}
+              </Link>
             </Grid>
-          </Box>
+          </Grid>
         </Box>
-      </Container>
-    </ThemeProvider>
+      </Box>
+    </Container>
   );
 }

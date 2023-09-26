@@ -12,6 +12,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 
 
 export default function AdminLogin() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     UserId: '',
     UserPwd: '',
@@ -40,7 +41,6 @@ export default function AdminLogin() {
   const handleInputValidation = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
     const errors = { ...formErrors };
-
     // 驗證邏輯
     switch (name) {
       case 'UserId':
@@ -66,7 +66,6 @@ export default function AdminLogin() {
       default:
         break;
     }
-
     setFormErrors(errors);
   };
 
@@ -79,7 +78,6 @@ export default function AdminLogin() {
 
     });
   };
-  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -93,7 +91,7 @@ export default function AdminLogin() {
           method: 'POST',
           body: form,
           headers: {
-            'Authorization': `Bearer ${formData.token}`, // 在请求头中包含 Bearer Token
+            'Authorization': `Bearer ${formData.token}`, 
           },
         });
 

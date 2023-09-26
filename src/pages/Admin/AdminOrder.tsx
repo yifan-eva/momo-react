@@ -1,12 +1,10 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, Toolbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled, alpha } from '@mui/material/styles';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { styled, alpha } from '@mui/material/styles';
+import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, Toolbar } from '@mui/material';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -60,10 +58,10 @@ type Order = {
     status: string
 }
 export default function AdminMember() {
+    const userId = localStorage.getItem("userid")
+    const adminId = localStorage.getItem("admin")
     const navigate = useNavigate();
     const [orders, setOrders] = useState<Order[]>([]);
-    const userId = localStorage.getItem("userid")
-    const amdinId = localStorage.getItem("admin")
     const [searchTerm, setSearchTerm] = useState('')
     const [orderItems, setOrderItems] = useState<Order[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -85,7 +83,6 @@ export default function AdminMember() {
         }
     };
 
-
     const handleBackClick = (id: string) => {
         navigate(`/AdminOrderItem?orderid=` + id); // 导航到指定的路由
     };
@@ -99,7 +96,6 @@ export default function AdminMember() {
                 String(order.place).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(order.pay).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(order.status).toLowerCase().includes(searchTerm.toLowerCase())
-                // String(order.orderDate).toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
         // 更新訂單列表
@@ -109,42 +105,38 @@ export default function AdminMember() {
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
-            // 检查订单ID是否有效
+            // 檢查ID是否有效
             if (!orderId || orderId === '0') {
-                console.error('无效的订单ID:', orderId);
-                return; // 不执行更新操作
+                console.error('沒有此訂單:', orderId);
+                return; 
             }
-            // 创建一个对象来表示要发送的数据
+            // 把要傳送的訊息封裝起來
             const data = {
                 orderId: orderId,
                 status: newStatus,
             };
-
             console.log("訂單", orderId, "狀態", newStatus)
 
-            // 发送POST请求到后端以更新订单状态
             const response = await fetch('https://localhost:44373/orders/OrderStatus', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // 设置请求头
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     orderId: data.orderId,
                     Status: data.status
-                }), // 将数据转换为 JSON 字符串
+                }),
             });
             console.log(response)
 
             if (!response.ok) {
                 const errorMessage = await response.text();
                 console.error('请求失败:', errorMessage);
-                // 在这里处理错误，例如显示一个错误消息给用户
             } else {
-                // 更新前端的订单状态
+                // 更新前端訂單狀態
                 const updatedOrders = orders.map((order) => {
                     if (order.orderId === orderId) {
                         order.status = newStatus;
-
                         console.log(userId)
                         console.log(newStatus)
                     }
@@ -154,13 +146,30 @@ export default function AdminMember() {
                 console.log(orders)
                 console.log(updatedOrders);
                 setOrders(updatedOrders);
-
                 console.log('訂單狀態已更新');
             }
         } catch (error) {
             console.error('更新订单状态时发生错误:', error);
         }
     };
+
+    //判斷是否登入
+    useEffect(() => {
+        if (!adminId) {
+            alert("未登入無法進入")
+            navigate('/AdminLogin');
+        }
+    }, [adminId, navigate]);
+
+    useEffect(() => {
+        // 當搜索關鍵字發生變化時執行搜索
+        handleSearch();
+    }, [searchTerm]);
+
+    useEffect(() => {
+        // 初始化 orderItems，顯示所有訂單
+        setOrderItems(orders);
+    }, [orders]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -174,9 +183,9 @@ export default function AdminMember() {
                 }
                 const data = await response.json();
 
-                // 按订单ID降序排列
+                // 按照訂單ID降冪排序
                 const sortedData = [...data].sort((a, b) => {
-                    // 将订单ID解析为数字，然后按数字降序排列
+                    // 將ID解析為數字再加以排序
                     return parseInt(b.orderId) - parseInt(a.orderId);
                 });
                 setOrders(sortedData);
@@ -186,24 +195,6 @@ export default function AdminMember() {
         };
         fetchData();
     }, []);
-
-    //判斷是否登入
-    useEffect(() => {
-        if (!amdinId) {
-            alert("未登入無法進入")
-            navigate('/AdminLogin');
-        }
-    }, [userId, navigate]);
-
-    useEffect(() => {
-        // 當搜索關鍵字發生變化時執行搜索
-        handleSearch();
-    }, [searchTerm]);
-
-    useEffect(() => {
-        // 初始化 orderItems，顯示所有訂單
-        setOrderItems(orders);
-    }, [orders]);
 
     return (
         <Container component="main" sx={{ py: 8 }} maxWidth="md">
@@ -313,7 +304,7 @@ export default function AdminMember() {
                             <Button
                                 sx={{
                                     py: 1,
-                                    marginRight: 1, 
+                                    marginRight: 1,
                                 }}
                                 variant="outlined"
                                 color="primary"

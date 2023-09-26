@@ -1,8 +1,7 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, TableFooter, Toolbar } from '@mui/material';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Toolbar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
@@ -60,10 +59,10 @@ type Product = {
 
 }
 export default function AdminMember() {
-    const navigate = useNavigate();
-    const [products, setProducts] = useState<Product[]>([]);
     const userId = localStorage.getItem("userid")
     const amdinId = localStorage.getItem("admin")
+    const navigate = useNavigate();
+    const [products, setProducts] = useState<Product[]>([]);
     const [searchTerm, setSearchTerm] = useState('')
     const [productItems, setProductItems] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -93,7 +92,6 @@ export default function AdminMember() {
                 String(product.productName).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(product.productPrice).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(product.categoryName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                String(product.image).toLowerCase().includes(searchTerm.toLowerCase()) ||
                 String(product.status).toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
@@ -126,8 +124,8 @@ export default function AdminMember() {
     }, []);
 
     const handleStatusSubmit = async (productId: string) => {
-        // 找到与 memberId 匹配的会员对象
         const updatedProducts = products.map((product) => {
+            //找到商品ID
             if (product.productId === productId) {
                 if (product.status === 'off') {
                     product.status = 'on';
@@ -135,14 +133,12 @@ export default function AdminMember() {
                     product.status = 'off';
                 }
             }
-            // 返回更新后的会员对象
             return product;
         });
-        // 创建 FormData，并将 memberId 和新的 Status 添加到 FormData 中
+        //將ProductId,Status包裝到formData
         const formData = new FormData();
         formData.append('ProductId', productId);
         formData.append('Status', updatedProducts.find((product) => product.productId === productId)?.status || '');
-
         try {
             const response = await fetch('https://localhost:44373/Product/ProductStatus', {
                 method: 'POST',
@@ -151,7 +147,6 @@ export default function AdminMember() {
 
             if (response.ok) {
                 console.log('提交成功');
-
                 setProducts(updatedProducts);
             } else {
                 console.error('請檢查填寫內容', Error);
@@ -164,14 +159,13 @@ export default function AdminMember() {
         navigate(`/AdminProductCreate`)
     }
 
-
     //判斷是否登入
     useEffect(() => {
         if (!amdinId) {
             alert("未登入無法進入")
             navigate('/AdminLogin');
         }
-    }, [userId, navigate]);
+    }, [amdinId, navigate]);
 
     useEffect(() => {
         // 當搜索關鍵字發生變化時執行搜索
@@ -297,11 +291,12 @@ export default function AdminMember() {
                             >
                                 下一頁
                             </Button>
-                            <Box sx={{ flexGrow: 1 }} /> {/* 使用 flexGrow 来填充工具栏的剩余空间 */}
+                            {/* flexGrow可以調整間距 */}
+                            <Box sx={{ flexGrow: 1 }} /> 
                             <Button
                                 sx={{
                                     py: 1,
-                                    marginLeft: 'auto' // 将按钮放置在工具栏的末尾
+                                    marginLeft: 'auto' 
                                 }}
                                 variant="outlined"
                                 color="primary"

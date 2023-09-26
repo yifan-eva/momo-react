@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
 import { Avatar, Box, Button, Container, TableFooter, TableRow, TableCell, Radio, RadioGroup, FormLabel, TableContainer, Table, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +10,12 @@ import ForwardIcon from '@mui/icons-material/Forward';
 import { useState, useEffect } from 'react';
 
 export default function OrderCheck1() {
-    
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId')
     const token = localStorage.getItem('tokne')
     const [cartData, setCartData] = useState<CartItem[]>([]);
+
     const [formData, setFormData] = useState({
         UserId: '',
         OrderDate: '2023-09-19T15:4848.018Z',
@@ -94,14 +93,14 @@ export default function OrderCheck1() {
     const handleBackClick = () => {
         navigate('/cart'); // 导航到指定的路由
     };
-    
+
     //判斷是否登入
     useEffect(() => {
         if (!userId) {
-          alert("請先登入")
-          navigate('/login'); 
+            alert("請先登入")
+            navigate('/login');
         }
-      }, [userId, navigate]);
+    }, [userId, navigate]);
 
     useEffect(() => {
         fetch('https://localhost:44373/CartMember/' + localStorage.getItem('userId'), {
@@ -117,8 +116,6 @@ export default function OrderCheck1() {
             });
     }, []);
     console.log("12", cartData)
-    // console.log("12", cartData.productId)
-
 
     const handleValidateSubmit = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
@@ -137,10 +134,12 @@ export default function OrderCheck1() {
         try {
             const response = await fetch('https://localhost:44373/orders/create', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json',
-                           'Authorization': `Bearea ${token}`},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearea ${token}`
+                },
                 body: JSON.stringify({
-                    UserId :userId,
+                    UserId: userId,
                     Pay: formData.Pay,
                     Place: formData.Place,
                     OrderName: formData.OrderName,
@@ -220,7 +219,6 @@ export default function OrderCheck1() {
             </TableContainer>
             <Box
                 sx={{
-                    // marginTop: 2,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -331,7 +329,6 @@ export default function OrderCheck1() {
                                     </Button>
                                 </DialogActions>
                             </Dialog>
-
                         </Grid>
                     </React.Fragment>
                 </Box>

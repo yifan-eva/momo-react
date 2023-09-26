@@ -1,17 +1,65 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, TableFooter, TableRow, TableCell, Radio, RadioGroup, FormLabel, TableContainer, Table, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid } from '@mui/material';
+import { Avatar, Box, Button, Container, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, InputBase, Toolbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { styled, alpha } from '@mui/material/styles';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import SearchIcon from '@mui/icons-material/Search';
 
+
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    border: '1px solid black', // 添加黑色边框
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(3),
+        width: 'auto',
+    },
+}));
+//搜尋欄的定位
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
+//搜尋欄位
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(0)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
+        },
+    },
+}));
 
 export default function OrderCheck2() {
     const userId = localStorage.getItem("userId")
     const navigate = useNavigate();
     const [orders, setOrders] = useState<Order[]>([]);
+    const [searchTerm, setSearchTerm] = useState('')
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 10;
+    const startIndex = (currentPage - 1) * ordersPerPage;
+    const endIndex = startIndex + ordersPerPage;
+    const ordersToDisplay = orders.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(orders.length / ordersPerPage);
+
     interface Order {
         orderId: string,
         userId: string,
@@ -22,18 +70,45 @@ export default function OrderCheck2() {
         pay: string,
         status: string,
     }
-    const [orderItems, setOrderItemss] = useState<OrderItem[]>([]);
-    interface OrderItem {
-        orderId: string,
-        orderItemId: string,
-        productName: string,
-        price: string,
-        quantity: string,
-        userId: string,
-    }
+    // const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+    // interface OrderItem {
+    //     orderId: string,
+    //     orderItemId: string,
+    //     productName: string,
+    //     price: string,
+    //     quantity: string,
+    //     userId: string,
+    // }
 
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
     const handleBackClick = (id: string) => {
         navigate(`/OrderCheck3?orderid=` + id); // 导航到指定的路由
+    };
+
+    const handleSearch = () => {
+        // 使用filter方法篩選符合搜索條件的訂單
+        const filteredOrders = orders.filter((order) => {
+            return (
+                String(order.orderId).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(order.userId).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(order.place).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(order.pay).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                String(order.status).toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
+        // 更新訂單列表
+        setOrders(filteredOrders);
+        setCurrentPage(1);
     };
 
     //判斷是否登入
@@ -77,21 +152,48 @@ export default function OrderCheck2() {
     return (
         <Container component="main" sx={{ py: 8 }} maxWidth="md">
             <Grid container spacing={8}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                    }}
-                >
-                    < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                        <ListAltIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        我的訂單
-                    </Typography>
-                </Box>
+                <TableRow>
+                    <TableCell>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                textAlign: 'center',
+                            }}
+                        >
+                            < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
+                                <ListAltIcon />
+                            </Avatar>
+                            <Typography component="h1" variant="h5">
+                                我的訂單
+                            </Typography>
+                        </Box>
+                    </TableCell>
+                    <TableCell>
+                        <Search>
+                            <SearchIcon
+                                onClick={handleSearch}
+                                style={{ cursor: 'pointer' }}
+                                role="button"
+                                tabIndex={0}
+                            />
+                            <SearchIconWrapper>
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                placeholder="搜尋"
+                                inputProps={{ 'aria-label': 'search' }}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyUp={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSearch();
+                                    }
+                                }}
+                            />
+                        </Search>
+                    </TableCell>
+                </TableRow>
                 <TableContainer sx={{ py: 1 }} >
                     <Typography>
                         <TableHead>
@@ -138,6 +240,29 @@ export default function OrderCheck2() {
                                 </TableRow>
                             ))}
                         </TableBody>
+                        <Toolbar>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                    marginRight: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handlePreviousPage}
+                            >
+                                上一頁
+                            </Button>
+                            <Button
+                                sx={{
+                                    py: 1,
+                                }}
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleNextPage}
+                            >
+                                下一頁
+                            </Button>
+                        </Toolbar>
                     </Typography>
                 </TableContainer>
             </Grid>

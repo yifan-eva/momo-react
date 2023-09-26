@@ -12,9 +12,9 @@ interface CartItem {
 }
 export default function Cart() {
     const userId = localStorage.getItem('userId');
+    const navigate = useNavigate();
     const [cartData, setCartData] = useState<CartItem[]>([]);
     const [itemQuantities, setItemQuantities] = useState<{ [productId: string]: number }>({});
-    const navigate = useNavigate();
 
     const handleBackClick = () => {
         navigate('/Product'); // 导航到指定的路由
@@ -38,7 +38,6 @@ export default function Cart() {
                 const data = await response.json();
                 setCartData(data);
                 console.log("data", data)
-                // 处理从后端收到的购物车商品数据
                 const quantities: { [productId: string]: number } = {};
                 data.forEach((item: { productId: string | number; quantity: number; }) => {
                     quantities[item.productId] = item.quantity;
@@ -46,11 +45,9 @@ export default function Cart() {
                 setItemQuantities(quantities);
             } else {
                 console.error('發生錯誤:', response);
-                // 处理请求失败的情况
             }
         } catch (error) {
             console.error('發生錯誤:', error);
-            // 处理请求错误
         }
     }
     //更新購物車
@@ -70,25 +67,20 @@ export default function Cart() {
             });
 
             if (response.ok) {
-                // 更新购物车项成功
-                // 可以选择刷新购物车数据或者执行其他操作
-                fetchData(); // 刷新购物车数据
+                fetchData(); 
             } else {
-                // 处理更新失败的情况
                 console.error('更新失败:', response);
             }
         } catch (error) {
-            // 处理请求错误
             console.error('更新失败:', error);
         }
     };
-
+    //數量更新
     const handleQuantityChange = async (e: { target: { value: any; }; }, userId: string, productId: string) => {
         const newQuantity = parseInt(e.target.value, 10);
         updateCartItemQuantity(userId, productId, newQuantity);
     };
 
-    // 移除购物车中的商品
     const removeCartItem = async (userId: string, productId: any) => {
         try {
             const removeDto = {
@@ -103,14 +95,11 @@ export default function Cart() {
             });
 
             if (response.ok) {
-                // 处理删除成功的情况
                 const updatedCartData = cartData.filter(item => item.productId !== productId);
                 setCartData(updatedCartData);
             } else {
-                // 处理请求失败的情况
             }
         } catch (error) {
-            // 处理请求错误
         }
     };
     //判斷是否登入
@@ -155,7 +144,6 @@ export default function Cart() {
                         <TableBody>
                             {cartData.map((item: any) => (
                                 <TableRow>
-                                    {/* <TableRow key={item.productId}> */}
                                     <TableCell>
                                         <Button
                                             variant="outlined"
@@ -174,9 +162,9 @@ export default function Cart() {
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Select
-                                            value={itemQuantities[item.productId]} // 使用存储在对象中的数量
-                                            onChange={(e) => handleQuantityChange(e, item.userId, item.productId)} // 传递唯一标识
+                                        <Select                            
+                                            value={itemQuantities[item.productId]}
+                                            onChange={(e) => handleQuantityChange(e, item.userId, item.productId)} 
                                         >
                                             {[...Array(20)].map((_, i) => (
                                                 <MenuItem value={i + 1} key={i}>
@@ -196,7 +184,7 @@ export default function Cart() {
                             <TableRow>
                                 <TableCell colSpan={1}>
                                     <Button variant="outlined" color="primary" onClick={handleBackClick}>
-                                        {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品頁面
+                                        {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返回<br/>商品頁面
                                     </Button>
                                 </TableCell>
                                 <TableCell colSpan={2} sx={{ textAlign: 'right', fontSize: '18px' }}>
@@ -204,8 +192,9 @@ export default function Cart() {
                                     {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0).toFixed(2)}
                                 </TableCell>
                                 <TableCell colSpan={1}>
-                                    <Button variant="contained" color="primary" onClick={handleShopClick}>
-                                        我要購買
+                                    <Button variant="contained" color="primary" onClick={handleShopClick} >
+                                        我要<br/>
+                                        購買
                                     </Button>
                                 </TableCell>
                             </TableRow>

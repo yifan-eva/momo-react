@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Container, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid } from '@mui/material';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
 
@@ -20,7 +20,7 @@ export default function OrderCheck2() {
         userId: string,
     }
     const handleBackClick = () => {
-        navigate(`/AdminOrder`); // 导航到指定的路由
+        navigate(`/AdminOrder`);
     };
 
     //判斷是否登入
@@ -39,14 +39,12 @@ export default function OrderCheck2() {
                 const response = await fetch(`https://localhost:44373/orders/orderid` + id, {
                     method: 'POST',
                 });
-
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
                 console.log('order', data);
                 setOrderItems(data);
-                // 在数据加载完成后才执行相关操作
             } catch (error) {
                 console.error('發生錯誤:', error);
             }
@@ -97,7 +95,11 @@ export default function OrderCheck2() {
                                 </TableRow>
                             ))}
                         </TableBody>
-                        <Button variant="outlined" color="primary" onClick={handleBackClick} style={{ marginTop: '20px', marginBottom: '10px' }}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={handleBackClick}
+                            style={{ marginTop: '20px', marginBottom: '10px' }}>
                             {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 回到訂單資訊
                         </Button>
                     </Typography>

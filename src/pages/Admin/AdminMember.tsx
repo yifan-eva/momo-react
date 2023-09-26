@@ -1,12 +1,23 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, Toolbar } from '@mui/material';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled, alpha } from '@mui/material/styles';
 import RecentActorsIcon from '@mui/icons-material/RecentActors';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { styled, alpha } from '@mui/material/styles';
+import {
+    Avatar,
+    Box,
+    Button,
+    Container,
+    InputBase,
+    TableRow,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableBody,
+    Grid,
+    Toolbar
+} from '@mui/material';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -62,6 +73,7 @@ export default function AdminMember() {
     const [members, setMembers] = useState<Member[]>([]);
     const userId = localStorage.getItem("userid")
     const amdinId = localStorage.getItem("admin")
+    const token = localStorage.getItem("token")
     const [searchTerm, setSearchTerm] = useState('')
     const [memberItems, setMemberItems] = useState<Member[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -105,6 +117,9 @@ export default function AdminMember() {
             try {
                 const response = await fetch(`https://localhost:44373/MemberEdit/all`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                      },
                 });
 
                 if (!response.ok) {
@@ -113,7 +128,6 @@ export default function AdminMember() {
                 const data = await response.json();
                 console.log('order', data);
                 setMembers(data);
-                // 在数据加载完成后才执行相关操作
             } catch (error) {
                 console.error('發生錯誤:', error);
             }
@@ -122,22 +136,16 @@ export default function AdminMember() {
     }, []);
 
     const handleSubmit = async (memberId: string) => {
-        // 找到与 memberId 匹配的会员对象
         const updatedMembers = members.map((member) => {
             if (member.userId === memberId) {
-                // 判断当前状态
                 if (member.status === 'BLOCK') {
-                    // 如果当前是 BLOCK，将状态切换为 UNBLOCK
                     member.status = 'UNBLOCK';
                 } else {
-                    // 如果当前是 UNBLOCK，将状态切换为 BLOCK
                     member.status = 'BLOCK';
                 }
             }
-            // 返回更新后的会员对象
             return member;
         });
-        // 创建 FormData，并将 memberId 和新的 Status 添加到 FormData 中
         const formData = new FormData();
         formData.append('UserId', memberId);
         formData.append('Status', updatedMembers.find((member) => member.userId === memberId)?.status || '');
@@ -150,18 +158,13 @@ export default function AdminMember() {
 
             if (response.ok) {
                 console.log('提交成功');
-                // alert('更新成功');
-                // 更新本地状态以反映更改
+                alert('更新成功');
                 setMembers(updatedMembers);
-                // 在请求成功时，可能执行一些其他操作
             } else {
                 console.error('請檢查填寫內容', Error);
-                // 在请求失败时，可能采取其他操作或显示错误消息
             }
         } catch (error) {
-            // 捕获异常并输出错误信息
             console.error('發生錯誤', error);
-            // 可能还需要采取其他操作，如显示网络错误消息
         }
     };
 

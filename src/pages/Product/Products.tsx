@@ -10,13 +10,20 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function ProductCard() {
-  // const [state, dispatch] = useContext(CartContext);
+  const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [search, setSearch] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(9); // 每页显示的商品数量
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const totalPages = Math.ceil(products.length / productsPerPage);
-  const location = useLocation();
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
 
   useEffect(() => {
     const categoryId = search.get("categoryId");
@@ -30,7 +37,7 @@ export default function ProductCard() {
     }
     // 檢查是否有 keyword 參數
     if (params !== '' && keyword) {
-      // 如果已经有查巡參數，使用 '&' 连接
+      // 如果已經有查詢參數用&做連接
       params += `&keyword=${keyword}`;
     } else if (keyword) {
       params += `?keyword=${keyword}`;
@@ -47,21 +54,17 @@ export default function ProductCard() {
       });
   }, [location]);
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-        setCurrentPage(currentPage + 1);
+      setCurrentPage(currentPage + 1);
     }
-};
+  };
 
-const handlePreviousPage = () => {
+  const handlePreviousPage = () => {
     if (currentPage > 1) {
-        setCurrentPage(currentPage - 1);
+      setCurrentPage(currentPage - 1);
     }
-};
+  };
 
   console.log("p", products)
   interface Product {
@@ -72,11 +75,6 @@ const handlePreviousPage = () => {
     productPrice: number;
     status: string;
   }
-
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const userId = localStorage.getItem('userId');
-  const navigate = useNavigate();
 
   const handleAddToCart = async (product: Product) => {
     try {
@@ -197,7 +195,7 @@ const handlePreviousPage = () => {
         >
           下一頁
         </Button>
-        </Toolbar>
+      </Toolbar>
     </Container>
 
   );

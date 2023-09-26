@@ -13,16 +13,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Profile() {
   const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
-
-  // 检查用户是否已登录
-  useEffect(() => {
-    if (!userId) {
-      alert("請先登入")
-      // 如果用户未登录，将其重定向到登录页面或执行其他操作
-      navigate('/login'); // 重定向到登录页面
-    }
-  }, [userId, navigate]);
-
+  const token = localStorage.getItem('token');
   const [formData, setFormData] = useState({
     userId: '',
     userName: '',
@@ -120,38 +111,10 @@ export default function Profile() {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userId = localStorage.getItem("userId");
-        console.log(userId);
-
-        const response = await fetch(`https://localhost:44373/MemberProfile/` + userId, {
-          method: 'POST',
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        console.log('data', data);
-        setFormData(data);
-        setFormNewData(data)
-        // 在数据加载完成后才执行相关操作
-        console.log("1", formData.userId);
-      } catch (error) {
-        console.error('發生錯誤:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event?.preventDefault();
 
     if (validateForm()) {
-      // const form = new FormData();
       const formNew = new FormData();
       formNew.append('UserId', formNewData.userId);
       formNew.append('UserName', formNewData.userName);
@@ -175,11 +138,41 @@ export default function Profile() {
       }
     }
   };
-console.log("aa",formNewData)
-  // 主題的設置
-  const defaultTheme = createTheme();
+
+  useEffect(() => {
+    if (!userId) {
+      alert("請先登入")
+      navigate('/login'); 
+    }
+  }, [userId, navigate]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://localhost:44373/MemberProfile/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('data', data);
+        setFormData(data);
+        setFormNewData(data)
+        console.log("1", formData.userId);
+      } catch (error) {
+        console.error('發生錯誤:', error);
+      }
+    };
+    fetchData();
+  }, []);
+ 
   return (
-    <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -289,7 +282,6 @@ console.log("aa",formNewData)
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-            // onClick={handleSubmit}
             >
               更新會員資料
             </Button>
@@ -298,6 +290,5 @@ console.log("aa",formNewData)
           }
         </Box>
       </Container>
-    </ThemeProvider>
   );
 }

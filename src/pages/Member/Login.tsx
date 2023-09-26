@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     UserId: '',
     UserPwd: '',
@@ -22,9 +23,7 @@ export default function Login() {
     UserId: '',
     UserPwd: '',
   })
-  // const [token, setToken] = useState('');
 
-  // const bearerToken = 'your_bearer_token_here';
   const validateForm = () => {
     const errors = {
       UserId: '',
@@ -69,7 +68,6 @@ export default function Login() {
       default:
         break;
     }
-
     setFormErrors(errors);
   };
 
@@ -82,8 +80,6 @@ export default function Login() {
 
     });
   };
-  
-  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

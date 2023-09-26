@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useEffect, useState } from 'react';
@@ -22,7 +21,7 @@ export default function OrderCheck2() {
         userId: string,
     }
     const handleBackClick = () => {
-        navigate(`/OrderCheck2?userid=${userId}`); // 导航到指定的路由
+        navigate(`/OrderCheck2?userid=${userId}`); 
     };
 
     //判斷是否登入
