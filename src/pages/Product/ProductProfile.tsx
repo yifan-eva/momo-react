@@ -33,6 +33,7 @@ export default function ProductCard() {
 
 
     const handleAddToCart = async (product: Product) => {
+        const token = localStorage.getItem("token")
         try {
             if (userId != null) {
                 const cartItem = new FormData();
@@ -45,6 +46,9 @@ export default function ProductCard() {
                 const response = await fetch('https://localhost:44373/CartMember/add', {
                     method: 'POST',
                     body: cartItem,
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                      },
                 });
                 // if (respnse.ok) {
                 if (response.ok) {
@@ -64,6 +68,7 @@ export default function ProductCard() {
         } catch (error: any) {
             setSnackbarMessage(`加入購物車失敗: ${error.message}`);
             setSnackbarOpen(true);
+            navigate("/Autorization")
         }
     };
 
@@ -76,7 +81,7 @@ export default function ProductCard() {
                 setProduct(data)
             })
             .catch(error => {
-                console.error('發稱錯誤:', error);
+                console.error('發生錯誤:', error);
             });
     }, []);
 

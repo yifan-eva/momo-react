@@ -11,6 +11,7 @@ export default function OrderCheck2() {
     const [search, setSearch] = useSearchParams();
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const adminId = localStorage.getItem("admin")
+    const token = localStorage.getItem("token")
     interface OrderItem {
         orderId: string,
         orderItemId: string,
@@ -37,7 +38,10 @@ export default function OrderCheck2() {
         const fetchData = async () => {
             try {
                 const response = await fetch(`https://localhost:44373/orders/orderid` + id, {
-                    method: 'POST',
+                    method: 'POST',                
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                      },
                 });
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -47,6 +51,7 @@ export default function OrderCheck2() {
                 setOrderItems(data);
             } catch (error) {
                 console.error('發生錯誤:', error);
+                navigate('/Authorization')
             }
         };
         fetchData();

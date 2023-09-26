@@ -2,9 +2,7 @@ import { InputBase } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 
 //搜尋欄
 const Search = styled('div')(({ theme }) => ({

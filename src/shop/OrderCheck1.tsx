@@ -13,7 +13,7 @@ export default function OrderCheck1() {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId')
-    const token = localStorage.getItem('tokne')
+    const token = localStorage.getItem('token')
     const [cartData, setCartData] = useState<CartItem[]>([]);
 
     const [formData, setFormData] = useState({
@@ -103,8 +103,11 @@ export default function OrderCheck1() {
     }, [userId, navigate]);
 
     useEffect(() => {
-        fetch('https://localhost:44373/CartMember/' + localStorage.getItem('userId'), {
+        fetch('https://localhost:44373/CartMember/', {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearea ${token}`
+            },
         })
             .then(response => response.json())
             .then(data => {
@@ -112,7 +115,8 @@ export default function OrderCheck1() {
                 setCartData(data)
             })
             .catch(error => {
-                console.error('發稱錯誤:', error);
+                console.error('發生錯誤:', error);
+                navigate('/Authorization')
             });
     }, []);
     console.log("12", cartData)
@@ -149,8 +153,7 @@ export default function OrderCheck1() {
             });
             if (response.ok) {
                 console.log('提交成功');
-                // localhost:44373/orders/useridfannn
-                navigate(`/OrderCheck2?userid=${userId}`);
+                navigate(`/OrderCheck2`);
             } else {
                 // console.error('請檢查填寫內容');
                 console.log(response);
@@ -158,6 +161,7 @@ export default function OrderCheck1() {
         } catch (error) {
             //捕獲異常
             console.error('發生錯誤', error);
+            navigate('/Authorization')
         }
     };
 

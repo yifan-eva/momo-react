@@ -77,6 +77,7 @@ export default function ProductCard() {
   }
 
   const handleAddToCart = async (product: Product) => {
+    const token = localStorage.getItem("token")
     try {
       if (userId != null) {
         const cartItem = new FormData();
@@ -89,6 +90,9 @@ export default function ProductCard() {
         const response = await fetch('https://localhost:44373/CartMember/add', {
           method: 'POST',
           body: cartItem,
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+          },
         });
         const result = await response.json();
         if (response.ok) {
@@ -105,6 +109,7 @@ export default function ProductCard() {
     } catch (error: any) {
       setSnackbarMessage(`加入購物車失敗: ${error.message}`);
       setSnackbarOpen(true);
+      navigate("/Authorization")
     }
   };
 

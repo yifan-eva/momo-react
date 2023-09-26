@@ -61,6 +61,7 @@ type Product = {
 export default function AdminMember() {
     const userId = localStorage.getItem("userid")
     const amdinId = localStorage.getItem("admin")
+    const token = localStorage.getItem("token")
     const navigate = useNavigate();
     const [products, setProducts] = useState<Product[]>([]);
     const [searchTerm, setSearchTerm] = useState('')
@@ -103,8 +104,11 @@ export default function AdminMember() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://localhost:44373/Product/all`, {
-                    method: 'POST',
+                const response = await fetch(`https://localhost:44373/Product/Adminall`, {
+                    method: 'POST',                    
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                      },
                 });
 
                 if (!response.ok) {
@@ -118,6 +122,7 @@ export default function AdminMember() {
                 setProducts(sortedProducts);
             } catch (error) {
                 console.error('發生錯誤:', error);
+                navigate('/Authorization')
             }
         };
         fetchData();
@@ -143,6 +148,9 @@ export default function AdminMember() {
             const response = await fetch('https://localhost:44373/Product/ProductStatus', {
                 method: 'POST',
                 body: formData,
+                headers: {
+                    'Authorization': `Bearer ${token}`, 
+                  },
             });
 
             if (response.ok) {
@@ -153,6 +161,7 @@ export default function AdminMember() {
             }
         } catch (error) {
             console.error('發生錯誤', error);
+            navigate('/Authorization')
         }
     };
     const handleSubmit = () => {

@@ -130,6 +130,7 @@ export default function AdminMember() {
                 setMembers(data);
             } catch (error) {
                 console.error('發生錯誤:', error);
+                navigate('/Authorization')
             }
         };
         fetchData();
@@ -154,6 +155,9 @@ export default function AdminMember() {
             const response = await fetch('https://localhost:44373/MemberEdit/UserStatus', {
                 method: 'POST',
                 body: formData,
+                headers: {
+                    'Authorization': `Bearer ${token}`, 
+                  },
             });
 
             if (response.ok) {
@@ -165,6 +169,7 @@ export default function AdminMember() {
             }
         } catch (error) {
             console.error('發生錯誤', error);
+            navigate('/Authorization')
         }
     };
 

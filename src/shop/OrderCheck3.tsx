@@ -12,6 +12,7 @@ export default function OrderCheck2() {
     const [search, setSearch] = useSearchParams();
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const userId = localStorage.getItem("userId")
+    const token = localStorage.getItem("token")
     interface OrderItem {
         orderId: string,
         orderItemId: string,
@@ -39,6 +40,9 @@ export default function OrderCheck2() {
             try {
                 const response = await fetch(`https://localhost:44373/orders/orderid` + id, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearea ${token}`
+                    },
                 });
 
                 if (!response.ok) {
@@ -50,6 +54,7 @@ export default function OrderCheck2() {
                 // 在数据加载完成后才执行相关操作
             } catch (error) {
                 console.error('發生錯誤:', error);
+                navigate('/Authorization')
             }
         };
         fetchData();

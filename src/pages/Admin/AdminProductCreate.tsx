@@ -14,6 +14,7 @@ import { InputLabel, MenuItem, Select } from '@mui/material';
 
 export default function AdminProductCreate() {
     const navigate = useNavigate();
+    const token = localStorage.getItem("token")
     const handleButtonClick = () => {
         navigate('/AdminProduct'); 
     };
@@ -123,6 +124,9 @@ export default function AdminProductCreate() {
                 const response = await fetch('https://localhost:44373/ProductCreate', {
                     method: 'POST',
                     body: form,
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                      },
                 });
                 if (response.ok) {
                     console.log('提交成功');
@@ -134,6 +138,7 @@ export default function AdminProductCreate() {
             } catch (error) {
                 //捕獲異常
                 console.error('發生錯誤', error);
+                navigate('/Authorization')
             }
         }
     };

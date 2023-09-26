@@ -50,6 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function OrderCheck2() {
     const userId = localStorage.getItem("userId")
+    const token = localStorage.getItem("token")
     const navigate = useNavigate();
     const [orders, setOrders] = useState<Order[]>([]);
     const [searchTerm, setSearchTerm] = useState('')
@@ -70,15 +71,6 @@ export default function OrderCheck2() {
         pay: string,
         status: string,
     }
-    // const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-    // interface OrderItem {
-    //     orderId: string,
-    //     orderItemId: string,
-    //     productName: string,
-    //     price: string,
-    //     quantity: string,
-    //     userId: string,
-    // }
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -125,8 +117,11 @@ export default function OrderCheck2() {
                 const userId = localStorage.getItem("userId");
                 console.log(userId);
 
-                const response = await fetch(`https://localhost:44373/orders/userid` + userId, {
+                const response = await fetch(`https://localhost:44373/orders/userid` , {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearea ${token}`
+                    },
                 });
 
                 if (!response.ok) {
@@ -142,6 +137,7 @@ export default function OrderCheck2() {
                 setOrders(sortedData);
             } catch (error) {
                 console.error('發生錯誤:', error);
+                navigate('/Authorization')
             }
         };
         fetchData();

@@ -81,6 +81,8 @@ export default function AdminLogin() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    localStorage.removeItem('admin')
+    localStorage.removeItem('token')
     if (validateForm()) {
       const form = new FormData();
       form.append('AdminId', formData.UserId);
@@ -91,7 +93,7 @@ export default function AdminLogin() {
           method: 'POST',
           body: form,
           headers: {
-            'Authorization': `Bearer ${formData.token}`, 
+            'Authorization': `Bearer ${formData.token}`,
           },
         });
 
@@ -113,6 +115,7 @@ export default function AdminLogin() {
         }
       } catch (error) {
         console.error('發生錯誤', error);
+        // navigate("/Authorization")
       }
     }
   };

@@ -7,12 +7,12 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export function MemberCreate() {
+  const token = localStorage.getItem('token')
   const [formData, setFormData] = useState({
     UserId: '',
     UserPwd: '',
@@ -84,13 +84,13 @@ export function MemberCreate() {
         }
         break;
       case 'UserPwd':
-        const UserPwdPattern = /^[a-zA-Z0-9]*$/;
+        const UserPwdPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
         //清除之前的錯誤消息
         errors.UserPwd = '';
         if (!value) {
           errors.UserPwd = '請輸入會員密碼';
         } else if (!UserPwdPattern.test(value)) {
-          errors.UserPwd = '帳號只能輸入英文或數字';
+          errors.UserPwd = '密碼必須包含至少一個英文大寫字母，並且長度至少為 6 位，只能包含英文和數字';
         }
         break;
       case 'RUserPwd':
@@ -157,6 +157,9 @@ export function MemberCreate() {
         const response = await fetch('https://localhost:44373/MemberCreate', {
           method: 'POST',
           body: form,
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+          },
         });
         if (response.ok) {
           console.log('提交成功');
@@ -167,6 +170,7 @@ export function MemberCreate() {
       } catch (error) {
         //捕獲異常
         console.error('發生錯誤', error);
+        navigate('/Authorization')
       }
     }
   };

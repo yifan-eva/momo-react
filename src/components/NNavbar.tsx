@@ -15,14 +15,13 @@ import AppNavBar from './AppNavBar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import FaceIcon from '@mui/icons-material/Face';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
-export default function Navbar() {
+export default function NNavbar() {
     //左邊欄位打開方法
     const [open, setOpen] = React.useState(false);
     //左邊欄位打開的功能
@@ -85,24 +84,15 @@ export default function Navbar() {
 
     //會員下拉
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [adminMenuAnchorEl, setAdminMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
-    const [isAdminOpen, setIsAdminOpen] = React.useState<boolean>(false);
     // const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
     // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
-    const adminId = localStorage.getItem('admin')
 
-    const handleAdminMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAdminMenuAnchorEl(event.currentTarget);
-    };
-    const handleAdminMenuClose = () => {
-        setIsAdminOpen(false);
-    };
-    const handleAdminProfileMenuOpen = () => {
-        setIsAdminOpen(true);
-    }
+    // const handleAdminMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    //     setAdminMenuAnchorEl(event.currentTarget);
+    // };
     const handleProfileMenuOpen = () => {
         setIsMenuOpen(true);
     };
@@ -125,15 +115,9 @@ export default function Navbar() {
         localStorage.removeItem('userId')
         localStorage.removeItem('token')
     };
-    const handleAdminLoggout = () => {
-        alert('帳號已登出，跳回首頁')
-        localStorage.removeItem('admin')
-        localStorage.removeItem('token')
-    };
 
     //isLoggedIn 表示用戶是否已經登入
     const isLoggedIn = userId !== null;
-    const isAdminLoggin = adminId !== null;
     // const isLoggedIn = false; // 或根據實際情況設置為 true 或 false
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -162,7 +146,7 @@ export default function Navbar() {
                         <MenuItem component={RouterLink} to={`/OrderCheck2`} onClick={handleMenuClose}>
                             我的訂單
                         </MenuItem>
-                        <MenuItem component={RouterLink} to="/" onClick={handleLoggout}>
+                        <MenuItem component={RouterLink} to="/Product" onClick={handleLoggout}>
                             登出
                         </MenuItem>
                     </div>
@@ -178,52 +162,6 @@ export default function Navbar() {
                     </div>
                 )]}
         </Menu>
-    );
-
-    const adminMenu = (
-        <Menu
-            sx={{ mt: 6 ,paddingRight :'1rem'}}
-            anchorEl={adminMenuAnchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            id={menuId}
-            keepMounted
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            open={isAdminOpen}
-            onClose={handleAdminMenuClose}
-        >
-            {isAdminLoggin ?
-                [(
-                    <div key={"loggedIn"}>
-                        <MenuItem component={RouterLink} to={`/AdminMember`} onClick={handleAdminMenuClose}>
-                            會員管理
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to={`/AdminOrder`} onClick={handleAdminMenuClose}>
-                            訂單管理
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to={`/AdminProduct`} onClick={handleAdminMenuClose}>
-                            商品管理
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/" onClick={handleAdminLoggout}>
-                            登出
-                        </MenuItem>
-                    </div>
-
-                )]
-                : [(
-                    <div key={"UnLoggedIn"}>
-                        <MenuItem component={RouterLink} to={`/AdminLogin`} onClick={handleAdminMenuClose}>
-                            管理員登入
-                        </MenuItem>
-                    </div>
-                )]
-            }
-        </Menu >
     );
 
     // const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -278,39 +216,13 @@ export default function Navbar() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link to="/Product" style={{ textDecoration: 'none', color: 'inherit' }}>
                             MoMo購物網
                         </Link>
                     </Typography>
                     <ProductSearch />
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        {<div>
-                            {adminMenu}
-                            {isAdminLoggin ? (
-                                <IconButton
-                                    size="large"
-                                    aria-label="cart"
-                                    color="inherit"
-                                    aria-haspopup="true"
-                                    aria-controls={menuId}
-                                    onClick={handleAdminProfileMenuOpen}
-                                >
-                                    <ManageAccountsIcon />
-                                </IconButton>
-                            ) : (
-                                <IconButton
-                                    size="large"
-                                    aria-label="cart"
-                                    color="inherit"
-                                    aria-haspopup="true"
-                                    aria-controls={menuId}
-                                    onClick={handleAdminProfileMenuOpen}
-                                >
-                                    <EngineeringIcon />
-                                </IconButton>
-                            )}
-                        </div>}
                         {isLoggedIn && (
                             <IconButton
                                 aria-label="cart"

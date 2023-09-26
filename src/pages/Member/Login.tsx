@@ -83,6 +83,8 @@ export default function Login() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    localStorage.removeItem('userId')
+    localStorage.removeItem('token')
     if (validateForm()) {
       const form = new FormData();
       form.append('UserId', formData.UserId);
@@ -100,7 +102,7 @@ export default function Login() {
         const responseData = await response.json();
         if (response.ok) {
           if (responseData.data.userId !== null) {
-            if (responseData.data.status !== "BLOCK" ) {
+            if (responseData.data.status !== "BLOCK") {
               console.log(responseData.data)
               console.log('token', responseData.data.token)
               console.log('提交成功');
@@ -198,6 +200,11 @@ export default function Login() {
             <Grid item>
               <Link href="/Demo/Create" variant="body2">
                 {"沒有帳號嗎?那快來註冊吧!"}
+              </Link>
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+              <Link href="/Demo/AdminLogin" variant="body2">
+                {"管理者登入"}
               </Link>
             </Grid>
           </Grid>

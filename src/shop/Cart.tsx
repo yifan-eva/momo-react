@@ -12,6 +12,7 @@ interface CartItem {
 }
 export default function Cart() {
     const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token')
     const navigate = useNavigate();
     const [cartData, setCartData] = useState<CartItem[]>([]);
     const [itemQuantities, setItemQuantities] = useState<{ [productId: string]: number }>({});
@@ -30,24 +31,35 @@ export default function Cart() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('https://localhost:44373/CartMember/' + localStorage.getItem('userId'), {
-                method: 'POST',
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setCartData(data);
-                console.log("data", data)
-                const quantities: { [productId: string]: number } = {};
-                data.forEach((item: { productId: string | number; quantity: number; }) => {
-                    quantities[item.productId] = item.quantity;
+            if(token){
+                const response = await fetch('https://localhost:44373/CartMember/' , {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                    },
                 });
-                setItemQuantities(quantities);
-            } else {
-                console.error('發生錯誤:', response);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCartData(data);
+                    console.log("data", data)
+                    const quantities: { [productId: string]: number } = {};
+                    data.forEach((item: { productId: string | number; quantity: number; }) => {
+                        quantities[item.productId] = item.quantity;
+                    });
+                    setItemQuantities(quantities);
+                } else if(response.status === 400) {
+                    navigate("/Authorization")
+                } else {
+                    console.error('發生錯誤:', response);
+                }
+            }else{
+                navigate("/Authorization")
             }
+            
         } catch (error) {
             console.error('發生錯誤:', error);
+            navigate("/Authorization")
         }
     }
     //更新購物車
@@ -62,6 +74,7 @@ export default function Cart() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(updateDto),
             });
@@ -73,6 +86,7 @@ export default function Cart() {
             }
         } catch (error) {
             console.error('更新失败:', error);
+            navigate('/Authorization')
         }
     };
     //數量更新
@@ -90,6 +104,7 @@ export default function Cart() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(removeDto),
             });
@@ -100,6 +115,8 @@ export default function Cart() {
             } else {
             }
         } catch (error) {
+            console.error('移除失败:', error);
+            navigate('/Authorization')
         }
     };
     //判斷是否登入

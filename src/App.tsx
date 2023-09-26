@@ -1,7 +1,7 @@
 import DemoLogin from "@/pages/DemoLogin";
 import { Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import Navbar from "./components/NNavbar";
+import NNavbar from "./components/NNavbar";
 import { MemberCreate } from "./pages/Member/Create";
 import Login from "./pages/Member/Login";
 import ProductCard from "./pages/Product/Products";
@@ -19,40 +19,48 @@ import AdminOrderItem from "./pages/Admin/AdminOrderItem";
 import AdminMember from "./pages/Admin/AdminMember";
 import AdminProduct from "./pages/Admin/AdminProduct";
 import AdminProductCreate from "./pages/Admin/AdminProductCreate";
+import Authorization from "./pages/DemoLogin/Authorization";
+import Navbar from "./components/NavBar";
+import AdminIndex from "./pages/Admin/AdminIndex";
 
 function App() {
+  const isAdminLoggedIn = localStorage.getItem('admin') !== null;
   return (
     <div className="App">
-        <Navbar></Navbar>
-        <Routes>
-          <Route path="/" element={<DemoLogin />} />
+      
+      {isAdminLoggedIn ? <Navbar /> : <NNavbar />}
 
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Create" element={<MemberCreate />} />
-          <Route path="/Profile" element={<Profile />} />
+      <Routes>
+        <Route path="/" element={<DemoLogin />} />
 
-          {/* <Route path="/aaa" element={<Product/>} /> */}
-          <Route path="/Product" element={< ProductCard />} />
-          <Route path="/ProductCategory" element={<ProductCard />} />
-          <Route path="/ProductProfile" element={< ProductProfile />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Create" element={<MemberCreate />} />
+        <Route path="/Profile" element={<Profile />} />
 
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/OrderCheck1" element={<OrderCheck1 />} />
-          <Route path="/OrderCheck2" element={<OrderCheck2 />} />
-          <Route path="/OrderCheck3" element={<OrderCheck3 />} />
+        {/* <Route path="/aaa" element={<Product/>} /> */}
+        <Route path="/Product" element={< ProductCard />} />
+        <Route path="/ProductCategory" element={<ProductCard />} />
+        <Route path="/ProductProfile" element={< ProductProfile />} />
 
-          <Route path="/AdminLogin" element={<AdminLogin/>} />
-          <Route path="/AdminOrder" element={<AdminOrder/>} />
-          <Route path="/AdminOrderItem" element={<AdminOrderItem/>} />
-          <Route path="/AdminMember" element={<AdminMember/>} />
-          <Route path="/AdminProduct" element={<AdminProduct/>} />
-          <Route path="/AdminProductCreate" element={<AdminProductCreate/>} />
- 
-          <Route path='*' element={<NotFound/>}></Route>
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/OrderCheck1" element={<OrderCheck1 />} />
+        <Route path="/OrderCheck2" element={<OrderCheck2 />} />
+        <Route path="/OrderCheck3" element={<OrderCheck3 />} />
+
+        <Route path="/AdminIndex" element={<AdminIndex />} />
+        <Route path="/AdminLogin" element={<AdminLogin />} />
+        <Route path="/AdminOrder" element={<AdminOrder />} />
+        <Route path="/AdminOrderItem" element={<AdminOrderItem />} />
+        <Route path="/AdminMember" element={<AdminMember />} />
+        <Route path="/AdminProduct" element={<AdminProduct />} />
+        <Route path="/AdminProductCreate" element={<AdminProductCreate />} />
+
+        <Route path='*' element={<NotFound />}></Route>
+        <Route path="/Authorization" element={<Authorization />} />
 
 
-        </Routes>
-        <Footer></Footer>
+      </Routes>
+      <Footer></Footer>
     </div>
   )
 }

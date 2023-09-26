@@ -58,8 +58,8 @@ type Order = {
     status: string
 }
 export default function AdminMember() {
-    const userId = localStorage.getItem("userid")
     const adminId = localStorage.getItem("admin")
+    const token = localStorage.getItem("token")
     const navigate = useNavigate();
     const [orders, setOrders] = useState<Order[]>([]);
     const [searchTerm, setSearchTerm] = useState('')
@@ -84,7 +84,7 @@ export default function AdminMember() {
     };
 
     const handleBackClick = (id: string) => {
-        navigate(`/AdminOrderItem?orderid=` + id); // 导航到指定的路由
+        navigate(`/AdminOrderItem?orderid=` + id); 
     };
 
     const handleSearch = () => {
@@ -121,6 +121,7 @@ export default function AdminMember() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, 
                 },
                 body: JSON.stringify({
                     orderId: data.orderId,
@@ -137,7 +138,6 @@ export default function AdminMember() {
                 const updatedOrders = orders.map((order) => {
                     if (order.orderId === orderId) {
                         order.status = newStatus;
-                        console.log(userId)
                         console.log(newStatus)
                     }
                     return order;
@@ -149,7 +149,8 @@ export default function AdminMember() {
                 console.log('訂單狀態已更新');
             }
         } catch (error) {
-            console.error('更新订单状态时发生错误:', error);
+            console.error('錯誤:', error);
+            navigate('/Authorization')
         }
     };
 
@@ -176,6 +177,9 @@ export default function AdminMember() {
             try {
                 const response = await fetch(`https://localhost:44373/orders/all`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                      },
                 });
 
                 if (!response.ok) {
@@ -191,6 +195,7 @@ export default function AdminMember() {
                 setOrders(sortedData);
             } catch (error) {
                 console.error('發生錯誤:', error);
+                navigate('/Authorization')
             }
         };
         fetchData();

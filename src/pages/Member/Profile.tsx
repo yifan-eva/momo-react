@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -124,6 +123,9 @@ export default function Profile() {
         const response = await fetch('https://localhost:44373/MemberEdit/', {
           method: 'POST',
           body: formNew,
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+          },
         });
         if (response.ok) {
           console.log('提交成功');
@@ -135,6 +137,7 @@ export default function Profile() {
       } catch (error) {
         //捕獲異常
         console.error('發生錯誤', error);
+        navigate('/Authorization')
       }
     }
   };
@@ -159,7 +162,6 @@ export default function Profile() {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
         const data = await response.json();
         console.log('data', data);
         setFormData(data);
@@ -167,6 +169,7 @@ export default function Profile() {
         console.log("1", formData.userId);
       } catch (error) {
         console.error('發生錯誤:', error);
+        navigate('/Authorization')
       }
     };
     fetchData();
