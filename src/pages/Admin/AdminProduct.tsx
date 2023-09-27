@@ -1,10 +1,11 @@
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Toolbar } from '@mui/material';
+import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Toolbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
+import Navbar from '@/components/NavBar';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -56,8 +57,8 @@ type Product = {
     image: string,
     categoryName: string,
     status: string,
-
 }
+
 export default function AdminMember() {
     const userId = localStorage.getItem("userid")
     const amdinId = localStorage.getItem("admin")
@@ -67,6 +68,7 @@ export default function AdminMember() {
     const [searchTerm, setSearchTerm] = useState('')
     const [productItems, setProductItems] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const productsPerPage = 10;
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
@@ -84,6 +86,19 @@ export default function AdminMember() {
             setCurrentPage(currentPage - 1);
         }
     };
+
+    const handleUpdateDialogOpen = () => {
+        setOpenUpdateDialog(true);
+        navigate('/AdminProductUpdate')
+    };
+
+    const handleUpdateDialogClose = () => {
+        setOpenUpdateDialog(false);
+    };
+
+    const handleupdateSubmit = () => {
+
+    }
 
     const handleSearch = () => {
         // 使用filter方法篩選符合搜索條件的訂單
@@ -105,10 +120,10 @@ export default function AdminMember() {
         const fetchData = async () => {
             try {
                 const response = await fetch(`https://localhost:44373/Product/Adminall`, {
-                    method: 'POST',                    
+                    method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`, 
-                      },
+                        'Authorization': `Bearer ${token}`,
+                    },
                 });
 
                 if (!response.ok) {
@@ -149,8 +164,8 @@ export default function AdminMember() {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Authorization': `Bearer ${token}`, 
-                  },
+                    'Authorization': `Bearer ${token}`,
+                },
             });
 
             if (response.ok) {
@@ -186,137 +201,139 @@ export default function AdminMember() {
     }, [products]);
 
     return (
-        <Container component="main" sx={{ py: 8 }} maxWidth="md">
-            <Grid container spacing={8}>
-                <TableRow>
-                    <TableCell>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                            }}
-                        >
-                            < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                                <ListAltIcon />
-                            </Avatar>
-                            <Typography component="h1" variant="h5">
-                                商品資料
-                            </Typography>
-                        </Box>
-                    </TableCell>
-                    <TableCell>
-                        <Search>
-                            <SearchIcon
-                                onClick={handleSearch}
-                                style={{ cursor: 'pointer' }}
-                                role="button"
-                                tabIndex={0}
-                            />
-                            <SearchIconWrapper>
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="搜尋"
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyUp={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSearch();
-                                    }
+        <Navbar>
+            <Container component="main" sx={{ py: 8 }} maxWidth="md">
+                <Grid container spacing={8}>
+                    <TableRow>
+                        <TableCell>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
                                 }}
-                            />
-                        </Search>
-                    </TableCell>
-                </TableRow>
-                <TableContainer sx={{ py: 1 }} >
-                    <Typography>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>產品ID</TableCell>
-                                <TableCell>產品名稱</TableCell>
-                                <TableCell>產品價錢</TableCell>
-                                <TableCell>產品分類</TableCell>
-                                <TableCell>產品狀態</TableCell>
-                                <TableCell>變更狀態</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {productsToDisplay.length === 0 ? (
+                            >
+                                < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
+                                    <ListAltIcon />
+                                </Avatar>
+                                <Typography component="h1" variant="h5">
+                                    商品資料
+                                </Typography>
+                            </Box>
+                        </TableCell>
+                        <TableCell>
+                            <Search>
+                                <SearchIcon
+                                    onClick={handleSearch}
+                                    style={{ cursor: 'pointer' }}
+                                    role="button"
+                                    tabIndex={0}
+                                />
+                                <SearchIconWrapper>
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder="搜尋"
+                                    inputProps={{ 'aria-label': 'search' }}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyUp={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSearch();
+                                        }
+                                    }}
+                                />
+                            </Search>
+                        </TableCell>
+                    </TableRow>
+                    <TableContainer sx={{ py: 1 }} >
+                        <Typography>
+                            <TableHead>
                                 <TableRow>
-                                    <TableCell colSpan={7}>找不到此項目</TableCell>
+                                    <TableCell>產品ID</TableCell>
+                                    <TableCell>產品名稱</TableCell>
+                                    <TableCell>產品價錢</TableCell>
+                                    <TableCell>產品分類</TableCell>
+                                    <TableCell>產品狀態</TableCell>
+                                    <TableCell>變更狀態</TableCell>
                                 </TableRow>
-                            ) : (
-                                productsToDisplay.map((product) => (
-                                    <TableRow key={product.productId}>
-                                        <TableCell>
-                                            {product.productId}
-                                        </TableCell>
-                                        <TableCell>
-                                            {product.productName}
-                                        </TableCell>
-                                        <TableCell >
-                                            ${product.productPrice}
-                                        </TableCell>
-                                        <TableCell>
-                                            {product.categoryName}
-                                        </TableCell>
-                                        <TableCell>
-                                            {product.status}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant='outlined'
-                                                color={product.status === 'off' ? 'error' : 'primary'}
-                                                onClick={() => handleStatusSubmit(product.productId)}
-                                            >
-                                                {product.status}
-                                            </Button>
-                                        </TableCell>
+                            </TableHead>
+                            <TableBody>
+                                {productsToDisplay.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={7}>找不到此項目</TableCell>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                        <Toolbar>
-                            <Button
-                                sx={{
-                                    py: 1,
-                                    marginRight: 1,
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handlePreviousPage}
-                            >
-                                上一頁
-                            </Button>
-                            <Button
-                                sx={{
-                                    py: 1,
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handleNextPage}
-                            >
-                                下一頁
-                            </Button>
-                            {/* flexGrow可以調整間距 */}
-                            <Box sx={{ flexGrow: 1 }} /> 
-                            <Button
-                                sx={{
-                                    py: 1,
-                                    marginLeft: 'auto' 
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handleSubmit}
-                            >
-                                商品上架
-                            </Button>
-                        </Toolbar>
-                    </Typography>
-                </TableContainer>
-            </Grid >
-        </Container >
+                                ) : (
+                                    productsToDisplay.map((product) => (
+                                        <TableRow key={product.productId}>
+                                            <TableCell>
+                                                {product.productId}
+                                            </TableCell>
+                                            <TableCell>
+                                                {product.productName}
+                                            </TableCell>
+                                            <TableCell >
+                                                ${product.productPrice}
+                                            </TableCell>
+                                            <TableCell>
+                                                {product.categoryName}
+                                            </TableCell>
+                                            <TableCell>
+                                                {product.status}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant='outlined'
+                                                    color={product.status === 'off' ? 'error' : 'primary'}
+                                                    onClick={() => handleStatusSubmit(product.productId)}
+                                                >
+                                                    {product.status}
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                            <Toolbar>
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                        marginRight: 1,
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handlePreviousPage}
+                                >
+                                    上一頁
+                                </Button>
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handleNextPage}
+                                >
+                                    下一頁
+                                </Button>
+                                {/* flexGrow可以調整間距 */}
+                                <Box sx={{ flexGrow: 1 }} />
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                        marginLeft: 'auto'
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handleSubmit}
+                                >
+                                    商品上架
+                                </Button>
+                            </Toolbar>
+                        </Typography>
+                    </TableContainer>
+                </Grid >
+            </Container >
+        </Navbar>
     );
 }

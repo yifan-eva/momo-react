@@ -53,13 +53,14 @@ export default function OrderCheck2() {
     const token = localStorage.getItem("token")
     const navigate = useNavigate();
     const [orders, setOrders] = useState<Order[]>([]);
+    const [orderItems, setOrderItems] = useState<Order[]>([]);
     const [searchTerm, setSearchTerm] = useState('')
     const [currentPage, setCurrentPage] = useState(1);
     const ordersPerPage = 10;
     const startIndex = (currentPage - 1) * ordersPerPage;
     const endIndex = startIndex + ordersPerPage;
-    const ordersToDisplay = orders.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(orders.length / ordersPerPage);
+    const ordersToDisplay = orderItems.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(orderItems.length / ordersPerPage);
 
     interface Order {
         orderId: string,
@@ -99,10 +100,19 @@ export default function OrderCheck2() {
             );
         });
         // 更新訂單列表
-        setOrders(filteredOrders);
+        setOrderItems(filteredOrders);
         setCurrentPage(1);
     };
 
+    useEffect(() => {
+        // 當搜索關鍵字發生變化時執行搜索
+        handleSearch();
+    }, [searchTerm]);
+
+    useEffect(() => {
+        // 初始化 orderItems，顯示所有訂單
+        setOrderItems(orders);
+    }, [orders]);
     //判斷是否登入
     useEffect(() => {
         if (!userId) {
@@ -117,10 +127,10 @@ export default function OrderCheck2() {
                 const userId = localStorage.getItem("userId");
                 console.log(userId);
 
-                const response = await fetch(`https://localhost:44373/orders/userid` , {
+                const response = await fetch(`https://localhost:44373/orders/userid`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearea ${token}`
+                        'Authorization': `Bearer ${token}`
                     },
                 });
 
@@ -128,7 +138,6 @@ export default function OrderCheck2() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-
                 // 依照orderId降冪排列
                 const sortedData = [...data].sort((a, b) => {
                     // 將orderId分析為數字，然後按數字降冪排列
@@ -204,37 +213,44 @@ export default function OrderCheck2() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {orders.map((order) => (
-                                <TableRow key={order.orderId}>
-                                    <TableCell>
-                                        {order.orderId}
-                                    </TableCell>
-                                    <TableCell>
-                                        {order.orderName}
-                                    </TableCell>
-                                    <TableCell >
-                                        {order.place}
-                                    </TableCell>
-                                    <TableCell>
-                                        {order.pay}
-                                    </TableCell>
-                                    <TableCell>
-                                        {order.status}
-                                    </TableCell>
-                                    <TableCell>
-                                        {order.orderDate}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            onClick={() => handleBackClick(order.orderId)}
-                                        >
-                                            詳細訂單資訊
-                                        </Button>
-                                    </TableCell>
+                            {ordersToDisplay.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={7}>找不到此項目</TableCell>
                                 </TableRow>
-                            ))}
+                            ) : (
+
+                                ordersToDisplay.map((order) => (
+                                    <TableRow key={order.orderId}>
+                                        <TableCell>
+                                            {order.orderId}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order.orderName}
+                                        </TableCell>
+                                        <TableCell >
+                                            {order.place}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order.pay}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order.status}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order.orderDate}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                onClick={() => handleBackClick(order.orderId)}
+                                            >
+                                                詳細訂單資訊
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
                         </TableBody>
                         <Toolbar>
                             <Button

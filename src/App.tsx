@@ -20,16 +20,14 @@ import AdminMember from "./pages/Admin/AdminMember";
 import AdminProduct from "./pages/Admin/AdminProduct";
 import AdminProductCreate from "./pages/Admin/AdminProductCreate";
 import Authorization from "./pages/DemoLogin/Authorization";
-import Navbar from "./components/NavBar";
 import AdminIndex from "./pages/Admin/AdminIndex";
 
 function App() {
-  const isAdminLoggedIn = localStorage.getItem('admin') !== null;
   return (
     <div className="App">
-      
-      {isAdminLoggedIn ? <Navbar /> : <NNavbar />}
 
+      {/* {isAdminLoggedIn ? <Navbar /> : <NNavbar />} */}
+      <NNavbar></NNavbar>
       <Routes>
         <Route path="/" element={<DemoLogin />} />
 

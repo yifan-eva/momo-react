@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useState } from 'react';
 import { InputLabel, MenuItem, Select } from '@mui/material';
+import Navbar from '@/components/NavBar';
 
 export default function AdminProductCreate() {
     const navigate = useNavigate();
@@ -143,6 +144,7 @@ export default function AdminProductCreate() {
         }
     };
     return (
+        <Navbar>
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <Box
@@ -274,5 +276,6 @@ export default function AdminProductCreate() {
                 {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 返到商品管理頁面
             </Button>
         </Container>
+        </Navbar>
     );
 }

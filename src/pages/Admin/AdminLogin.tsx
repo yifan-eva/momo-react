@@ -105,7 +105,7 @@ export default function AdminLogin() {
             localStorage.setItem('admin', responseData.data.adminId);
             localStorage.setItem('token', responseData.data.token);
             // alert("成功")
-            navigate('/AdminMember');
+            navigate('/AdminIndex');
           } else {
             console.error('登入失敗:', responseData.message);
             alert('登入失敗!')

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import { Avatar, Box, Button, Container, InputBase, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid, Select, MenuItem, Toolbar } from '@mui/material';
+import Navbar from '@/components/NavBar';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -84,7 +85,7 @@ export default function AdminMember() {
     };
 
     const handleBackClick = (id: string) => {
-        navigate(`/AdminOrderItem?orderid=` + id); 
+        navigate(`/AdminOrderItem?orderid=` + id);
     };
 
     const handleSearch = () => {
@@ -108,7 +109,7 @@ export default function AdminMember() {
             // 檢查ID是否有效
             if (!orderId || orderId === '0') {
                 console.error('沒有此訂單:', orderId);
-                return; 
+                return;
             }
             // 把要傳送的訊息封裝起來
             const data = {
@@ -116,12 +117,18 @@ export default function AdminMember() {
                 status: newStatus,
             };
             console.log("訂單", orderId, "狀態", newStatus)
+            // 提示用戶確認
+            const confirmed = window.confirm(`確定要將訂單狀態設為 ${newStatus} 嗎？`);
+
+            if (!confirmed) {
+                return; // 如果用戶取消操作，不執行後續代碼
+            }
 
             const response = await fetch('https://localhost:44373/orders/OrderStatus', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, 
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     orderId: data.orderId,
@@ -146,6 +153,7 @@ export default function AdminMember() {
                 console.log(orders)
                 console.log(updatedOrders);
                 setOrders(updatedOrders);
+                alert('狀態更新成功')
                 console.log('訂單狀態已更新');
             }
         } catch (error) {
@@ -178,8 +186,8 @@ export default function AdminMember() {
                 const response = await fetch(`https://localhost:44373/orders/all`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`, 
-                      },
+                        'Authorization': `Bearer ${token}`,
+                    },
                 });
 
                 if (!response.ok) {
@@ -202,135 +210,137 @@ export default function AdminMember() {
     }, []);
 
     return (
-        <Container component="main" sx={{ py: 8 }} maxWidth="md">
-            <Grid container spacing={8}>
-                <TableRow>
-                    <TableCell>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                            }}
-                        >
-                            < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                                <ReceiptLongIcon />
-                            </Avatar>
-                            <Typography component="h1" variant="h5">
-                                訂單資訊
-                            </Typography>
-                        </Box>
-                    </TableCell>
-                    <TableCell>
-                        <Search>
-                            <SearchIcon
-                                onClick={handleSearch}
-                                style={{ cursor: 'pointer' }}
-                                role="button"
-                                tabIndex={0}
-                            />
-                            <SearchIconWrapper>
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="搜尋"
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyUp={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSearch();
-                                    }
+        <Navbar>
+            <Container component="main" sx={{ py: 8 }} maxWidth="md">
+                <Grid container spacing={8}>
+                    <TableRow>
+                        <TableCell>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
                                 }}
-                            />
-                        </Search>
-                    </TableCell>
-                </TableRow>
-                <TableContainer sx={{ py: 1 }} >
-                    <Typography>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>訂單編號</TableCell>
-                                <TableCell>會員</TableCell>
-                                <TableCell>收件地址</TableCell>
-                                <TableCell>付款方式</TableCell>
-                                <TableCell>下單時間</TableCell>
-                                <TableCell>貨品狀況</TableCell>
-                                <TableCell>詳細訂單資訊</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {ordersToDisplay.length === 0 ? (
+                            >
+                                < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
+                                    <ReceiptLongIcon />
+                                </Avatar>
+                                <Typography component="h1" variant="h5">
+                                    訂單資訊
+                                </Typography>
+                            </Box>
+                        </TableCell>
+                        <TableCell>
+                            <Search>
+                                <SearchIcon
+                                    onClick={handleSearch}
+                                    style={{ cursor: 'pointer' }}
+                                    role="button"
+                                    tabIndex={0}
+                                />
+                                <SearchIconWrapper>
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder="搜尋"
+                                    inputProps={{ 'aria-label': 'search' }}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyUp={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSearch();
+                                        }
+                                    }}
+                                />
+                            </Search>
+                        </TableCell>
+                    </TableRow>
+                    <TableContainer sx={{ py: 1 }} >
+                        <Typography>
+                            <TableHead>
                                 <TableRow>
-                                    <TableCell colSpan={7}>找不到此項目</TableCell>
+                                    <TableCell sx={{ px: 1 }}>訂單編號</TableCell>
+                                    <TableCell sx={{ px: 1 }} >會員</TableCell>
+                                    <TableCell sx={{ px: 1 }} >付款方式</TableCell>
+                                    <TableCell sx={{ px: 3 }} >收件地址</TableCell>
+                                    <TableCell sx={{ px: 1 }} >下單時間</TableCell>
+                                    <TableCell sx={{ px: 2 }} >貨品狀況</TableCell>
+                                    <TableCell sx={{ px: 2 }} >詳細訂單資訊</TableCell>
                                 </TableRow>
-                            ) : (
-                                ordersToDisplay.map((order) => (
-                                    <TableRow key={order.orderId}>
-                                        <TableCell>
-                                            {order.orderId}
-                                        </TableCell>
-                                        <TableCell>
-                                            {order.userId}
-                                        </TableCell>
-                                        <TableCell >
-                                            {order.place}
-                                        </TableCell>
-                                        <TableCell>
-                                            {order.pay}
-                                        </TableCell>
-                                        <TableCell>
-                                            {order.orderDate}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Select
-                                                value={order.status}
-                                                onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-                                            >
-                                                <MenuItem value="待出貨">待出貨</MenuItem>
-                                                <MenuItem value="已出貨">已出貨</MenuItem>
-                                                <MenuItem value="已送達">已送達</MenuItem>
-                                            </Select>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="outlined"
-                                                color="error"
-                                                onClick={() => handleBackClick(order.orderId)}
-                                            >
-                                                詳細訂單資訊
-                                            </Button>
-                                        </TableCell>
+                            </TableHead>
+                            <TableBody>
+                                {ordersToDisplay.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={7}>找不到此項目</TableCell>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                        <Toolbar>
-                            <Button
-                                sx={{
-                                    py: 1,
-                                    marginRight: 1,
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handlePreviousPage}
-                            >
-                                上一頁
-                            </Button>
-                            <Button
-                                sx={{
-                                    py: 1,
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handleNextPage}
-                            >
-                                下一頁
-                            </Button>
-                        </Toolbar>
-                    </Typography>
-                </TableContainer>
-            </Grid >
-        </Container >
+                                ) : (
+                                    ordersToDisplay.map((order) => (
+                                        <TableRow key={order.orderId}>
+                                            <TableCell sx={{ px: 1 }}>
+                                                {order.orderId}
+                                            </TableCell>
+                                            <TableCell sx={{ px: 1 }}>
+                                                {order.userId}
+                                            </TableCell>
+                                            <TableCell sx={{ px: 1 }}>
+                                                {order.pay}
+                                            </TableCell>
+                                            <TableCell sx={{ px: 3 }}>
+                                                {order.place}
+                                            </TableCell>
+                                            <TableCell sx={{ px: 1 }}>
+                                                {order.orderDate}
+                                            </TableCell>
+                                            <TableCell sx={{ px: 2 }}>
+                                                <Select
+                                                    value={order.status}
+                                                    onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
+                                                >
+                                                    <MenuItem value="待出貨">待出貨</MenuItem>
+                                                    <MenuItem value="已出貨">已出貨</MenuItem>
+                                                    <MenuItem value="已送達">已送達</MenuItem>
+                                                </Select>
+                                            </TableCell>
+                                            <TableCell sx={{ px: 2 }}>
+                                                <Button
+                                                    variant="outlined"
+                                                    color="error"
+                                                    onClick={() => handleBackClick(order.orderId)}
+                                                >
+                                                    詳細訂單資訊
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                            <Toolbar>
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                        marginRight: 1,
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handlePreviousPage}
+                                >
+                                    上一頁
+                                </Button>
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handleNextPage}
+                                >
+                                    下一頁
+                                </Button>
+                            </Toolbar>
+                        </Typography>
+                    </TableContainer>
+                </Grid >
+            </Container >
+        </Navbar>
     );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Container, TableRow, TableCell, TableContainer, TableHead, TableBody, Grid } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import Navbar from '@/components/NavBar';
 
 
 export default function OrderCheck2() {
@@ -38,10 +39,10 @@ export default function OrderCheck2() {
         const fetchData = async () => {
             try {
                 const response = await fetch(`https://localhost:44373/orders/orderid` + id, {
-                    method: 'POST',                
+                    method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`, 
-                      },
+                        'Authorization': `Bearer ${token}`,
+                    },
                 });
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -59,57 +60,59 @@ export default function OrderCheck2() {
 
 
     return (
-        <Container component="main" sx={{ py: 8, width: '600px' }} maxWidth="md">
-            <Grid container spacing={8}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                    }}
-                >
-                    < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                        <ListAltIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        訂單詳細資訊
-                    </Typography>
-                </Box>
-                <TableContainer sx={{ py: 1 }} >
-                    <Typography>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>產品名稱</TableCell>
-                                <TableCell>產品價錢</TableCell>
-                                <TableCell>購買數量</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {orderItems.map((orderItem) => (
-                                <TableRow >
-                                    <TableCell>
-                                        {orderItem.productName}
-                                    </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        ${orderItem.price}
-                                    </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        {orderItem.quantity}
-                                    </TableCell>
+        <Navbar>
+            <Container component="main" sx={{ py: 8, width: '600px' }} maxWidth="md">
+                <Grid container spacing={8}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                        }}
+                    >
+                        < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
+                            <ListAltIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            訂單詳細資訊
+                        </Typography>
+                    </Box>
+                    <TableContainer sx={{ py: 1 }} >
+                        <Typography>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>產品名稱</TableCell>
+                                    <TableCell>產品價錢</TableCell>
+                                    <TableCell>購買數量</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={handleBackClick}
-                            style={{ marginTop: '20px', marginBottom: '10px' }}>
-                            {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 回到訂單資訊
-                        </Button>
-                    </Typography>
-                </TableContainer>
-            </Grid >
-        </Container >
+                            </TableHead>
+                            <TableBody>
+                                {orderItems.map((orderItem) => (
+                                    <TableRow >
+                                        <TableCell>
+                                            {orderItem.productName}
+                                        </TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>
+                                            ${orderItem.price}
+                                        </TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>
+                                            {orderItem.quantity}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleBackClick}
+                                style={{ marginTop: '20px', marginBottom: '10px' }}>
+                                {<ForwardIcon sx={{ transform: 'rotate(180deg)' }} />} 回到訂單資訊
+                            </Button>
+                        </Typography>
+                    </TableContainer>
+                </Grid >
+            </Container >
+        </Navbar>
     );
 }

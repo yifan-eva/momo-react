@@ -41,7 +41,7 @@ export default function OrderCheck2() {
                 const response = await fetch(`https://localhost:44373/orders/orderid` + id, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearea ${token}`
+                        'Authorization': `Bearer ${token}`
                     },
                 });
 

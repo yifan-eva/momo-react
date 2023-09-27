@@ -18,6 +18,7 @@ import {
     Grid,
     Toolbar
 } from '@mui/material';
+import Navbar from '@/components/NavBar';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -118,8 +119,8 @@ export default function AdminMember() {
                 const response = await fetch(`https://localhost:44373/MemberEdit/all`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`, 
-                      },
+                        'Authorization': `Bearer ${token}`,
+                    },
                 });
 
                 if (!response.ok) {
@@ -156,8 +157,8 @@ export default function AdminMember() {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Authorization': `Bearer ${token}`, 
-                  },
+                    'Authorization': `Bearer ${token}`,
+                },
             });
 
             if (response.ok) {
@@ -172,7 +173,6 @@ export default function AdminMember() {
             navigate('/Authorization')
         }
     };
-
 
     //判斷是否登入
     useEffect(() => {
@@ -192,128 +192,130 @@ export default function AdminMember() {
     }, [members]);
 
     return (
-        <Container component="main" sx={{ py: 8 }} maxWidth="md">
-            <Grid container spacing={8}>
-                <TableRow>
-                    <TableCell>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                            }}
-                        >
-                            < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
-                                <RecentActorsIcon />
-                            </Avatar>
-                            <Typography component="h1" variant="h5">
-                                會員資料
-                            </Typography>
-                        </Box>
-                    </TableCell>
-                    <TableCell>
-                        <Search>
-                            <SearchIcon
-                                onClick={handleSearch}
-                                style={{ cursor: 'pointer' }}
-                                role="button"
-                                tabIndex={0}
-                            />
-                            <SearchIconWrapper>
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="搜尋"
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyUp={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSearch();
-                                    }
+        <Navbar>
+            <Container component="main" sx={{ py: 8 }} maxWidth="md">
+                <Grid container spacing={8}>
+                    <TableRow>
+                        <TableCell>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
                                 }}
-                            />
-                        </Search>
-                    </TableCell>
-                </TableRow>
-                <TableContainer sx={{ py: 1 }} >
-                    <Typography>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>會員帳號</TableCell>
-                                <TableCell>會員名稱</TableCell>
-                                <TableCell>電子郵件</TableCell>
-                                <TableCell>會員生日</TableCell>
-                                <TableCell>會員電話</TableCell>
-                                <TableCell>會員狀態</TableCell>
-                                <TableCell>變更狀態</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {membersToDisplay.length === 0 ? (
+                            >
+                                < Avatar sx={{ m: 3, bgcolor: 'secondary.main' }}>
+                                    <RecentActorsIcon />
+                                </Avatar>
+                                <Typography component="h1" variant="h5">
+                                    會員資料
+                                </Typography>
+                            </Box>
+                        </TableCell>
+                        <TableCell>
+                            <Search>
+                                <SearchIcon
+                                    onClick={handleSearch}
+                                    style={{ cursor: 'pointer' }}
+                                    role="button"
+                                    tabIndex={0}
+                                />
+                                <SearchIconWrapper>
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder="搜尋"
+                                    inputProps={{ 'aria-label': 'search' }}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyUp={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSearch();
+                                        }
+                                    }}
+                                />
+                            </Search>
+                        </TableCell>
+                    </TableRow>
+                    <TableContainer sx={{ py: 1 }} >
+                        <Typography>
+                            <TableHead>
                                 <TableRow>
-                                    <TableCell colSpan={7}>找不到此項目</TableCell>
+                                    <TableCell>會員帳號</TableCell>
+                                    <TableCell>會員名稱</TableCell>
+                                    <TableCell>電子郵件</TableCell>
+                                    <TableCell>會員生日</TableCell>
+                                    <TableCell>會員電話</TableCell>
+                                    <TableCell>會員狀態</TableCell>
+                                    <TableCell>變更狀態</TableCell>
                                 </TableRow>
-                            ) : (
-                                membersToDisplay.map((member) => (
-                                    <TableRow key={member.userId}>
-                                        <TableCell>
-                                            {member.userId}
-                                        </TableCell>
-                                        <TableCell>
-                                            {member.userName}
-                                        </TableCell>
-                                        <TableCell >
-                                            {member.email}
-                                        </TableCell>
-                                        <TableCell>
-                                            {member.birth}
-                                        </TableCell>
-                                        <TableCell>
-                                            {member.phone}
-                                        </TableCell>
-                                        <TableCell>
-                                            {member.status}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant='outlined'
-                                                color={member.status === 'BLOCK' ? 'error' : 'primary'}
-                                                onClick={() => handleSubmit(member.userId)}
-                                            >
-                                                {member.status}
-                                            </Button>
-                                        </TableCell>
+                            </TableHead>
+                            <TableBody>
+                                {membersToDisplay.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={7}>找不到此項目</TableCell>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                        <Toolbar>
-                            <Button
-                                sx={{
-                                    py: 1,
-                                    marginRight: 1,
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handlePreviousPage}
-                            >
-                                上一頁
-                            </Button>
-                            <Button
-                                sx={{
-                                    py: 1,
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                onClick={handleNextPage}
-                            >
-                                下一頁
-                            </Button>
-                        </Toolbar>
-                    </Typography>
-                </TableContainer>
-            </Grid >
-        </Container >
+                                ) : (
+                                    membersToDisplay.map((member) => (
+                                        <TableRow key={member.userId}>
+                                            <TableCell>
+                                                {member.userId}
+                                            </TableCell>
+                                            <TableCell>
+                                                {member.userName}
+                                            </TableCell>
+                                            <TableCell >
+                                                {member.email}
+                                            </TableCell>
+                                            <TableCell>
+                                                {member.birth}
+                                            </TableCell>
+                                            <TableCell>
+                                                {member.phone}
+                                            </TableCell>
+                                            <TableCell>
+                                                {member.status}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant='outlined'
+                                                    color={member.status === 'BLOCK' ? 'error' : 'primary'}
+                                                    onClick={() => handleSubmit(member.userId)}
+                                                >
+                                                    {member.status}
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                            <Toolbar>
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                        marginRight: 1,
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handlePreviousPage}
+                                >
+                                    上一頁
+                                </Button>
+                                <Button
+                                    sx={{
+                                        py: 1,
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handleNextPage}
+                                >
+                                    下一頁
+                                </Button>
+                            </Toolbar>
+                        </Typography>
+                    </TableContainer>
+                </Grid >
+            </Container >
+        </Navbar>
     );
 }

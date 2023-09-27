@@ -1,27 +1,16 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { AppBar, Drawer, useTheme } from '@mui/material';
-import Divider from '@mui/material/Divider';
+import { AppBar } from '@mui/material';
 import { Link, Link as RouterLink, useNavigate } from 'react-router-dom';
-import ProductSearch from './Search';
-import AppNavBar from './AppNavBar';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import EngineeringIcon from '@mui/icons-material/Engineering';
-import FaceIcon from '@mui/icons-material/Face';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { ReactNode } from 'react'; 
 
-export default function Navbar() {
+export default function Navbar({ children }: { children: ReactNode }) {
     const [adminMenuAnchorEl, setAdminMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const [isAdminOpen, setIsAdminOpen] = React.useState<boolean>(false);
     const adminId = localStorage.getItem("admin")
@@ -102,6 +91,7 @@ export default function Navbar() {
                     </Box>
                 </Toolbar>
             </AppBar>
+            {children}
         </Box >
     );
 }

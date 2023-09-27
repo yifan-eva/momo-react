@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
+import initSlice from './initSlice'
 
 
 export const store = configureStore({
   reducer: {
-    // init: initSlice
+    init: initSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

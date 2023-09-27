@@ -106,7 +106,7 @@ export default function OrderCheck1() {
         fetch('https://localhost:44373/CartMember/', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearea ${token}`
+                'Authorization': `Bearer ${token}`
             },
         })
             .then(response => response.json())
@@ -140,7 +140,7 @@ export default function OrderCheck1() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearea ${token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     UserId: userId,
