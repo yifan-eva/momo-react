@@ -82,10 +82,10 @@ export default function Cart() {
             if (response.ok) {
                 fetchData(); 
             } else {
-                console.error('更新失败:', response);
+                console.error('更新失敗:', response);
             }
         } catch (error) {
-            console.error('更新失败:', error);
+            console.error('更新失敗:', error);
             navigate('/Authorization')
         }
     };

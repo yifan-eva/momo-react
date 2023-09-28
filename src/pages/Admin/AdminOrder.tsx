@@ -107,10 +107,10 @@ export default function AdminMember() {
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
             // 檢查ID是否有效
-            if (!orderId || orderId === '0') {
-                console.error('沒有此訂單:', orderId);
-                return;
-            }
+            // if (!orderId || orderId === '0') {
+            //     console.error('沒有此訂單:', orderId);
+            //     return;
+            // }
             // 把要傳送的訊息封裝起來
             const data = {
                 orderId: orderId,
@@ -139,7 +139,7 @@ export default function AdminMember() {
 
             if (!response.ok) {
                 const errorMessage = await response.text();
-                console.error('请求失败:', errorMessage);
+                console.error('請求失敗:', errorMessage);
             } else {
                 // 更新前端訂單狀態
                 const updatedOrders = orders.map((order) => {
@@ -326,9 +326,11 @@ export default function AdminMember() {
                                 >
                                     上一頁
                                 </Button>
+                                <span>{currentPage}/{totalPages}</span>
                                 <Button
                                     sx={{
                                         py: 1,
+                                        marginLeft: 1,
                                     }}
                                     variant="outlined"
                                     color="primary"

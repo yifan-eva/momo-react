@@ -149,6 +149,7 @@ export default function AdminMember() {
             return member;
         });
         const formData = new FormData();
+        
         formData.append('UserId', memberId);
         formData.append('Status', updatedMembers.find((member) => member.userId === memberId)?.status || '');
 
@@ -301,9 +302,11 @@ export default function AdminMember() {
                                 >
                                     上一頁
                                 </Button>
+                                <span>{currentPage}/{totalPages}</span>
                                 <Button
                                     sx={{
                                         py: 1,
+                                        marginLeft: 1,
                                     }}
                                     variant="outlined"
                                     color="primary"

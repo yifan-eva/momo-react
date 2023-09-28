@@ -166,6 +166,7 @@ export function MemberCreate() {
           navigate('/Login');
         } else {
           console.error('請檢查填寫內容', Error);
+          alert("帳號已被註冊")
         }
       } catch (error) {
         //捕獲異常

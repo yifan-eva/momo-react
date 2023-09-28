@@ -115,7 +115,7 @@ export default function Login() {
             }
           } else {
             alert('登入失敗')
-            console.error('登录失败:', responseData.message);
+            console.error('登入失败:', responseData.message);
           }
         } else {
           console.error('請求失敗:', responseData.message);

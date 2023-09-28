@@ -63,7 +63,7 @@ export default function Navbar({ children }: { children: ReactNode }) {
 
     return (
         <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            <AppBar position="fixed" sx={{ backgroundColor: 'rgb(163 117 211 / 89%)' }}>
+            <AppBar position="fixed" sx={{ backgroundColor: 'rgb(163 117 211 / 100%)' }}>
                 <Toolbar>
                     <Typography
                         variant="h6"

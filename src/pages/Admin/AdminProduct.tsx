@@ -143,7 +143,7 @@ export default function AdminMember() {
         fetchData();
     }, []);
 
-    const handleStatusSubmit = async (productId: string) => {
+    const handleStatusSubmit = async (productId: string ,newstatus: string) => {
         const updatedProducts = products.map((product) => {
             //找到商品ID
             if (product.productId === productId) {
@@ -155,6 +155,11 @@ export default function AdminMember() {
             }
             return product;
         });
+        const status = newstatus === "off" ? "上架" : "下架"
+        const confirmed = window.confirm(`確定要將訂單狀態設為 ${status} 嗎？`);
+        if (!confirmed) {
+            return; // 如果用戶取消操作，不執行後續代碼
+        }
         //將ProductId,Status包裝到formData
         const formData = new FormData();
         formData.append('ProductId', productId);
@@ -279,15 +284,15 @@ export default function AdminMember() {
                                                 {product.categoryName}
                                             </TableCell>
                                             <TableCell>
-                                                {product.status}
+                                                {product.status === "off" ? "下架" : "上架"}
                                             </TableCell>
                                             <TableCell>
                                                 <Button
                                                     variant='outlined'
-                                                    color={product.status === 'off' ? 'error' : 'primary'}
-                                                    onClick={() => handleStatusSubmit(product.productId)}
+                                                    color={product.status === 'on' ? 'error' : 'primary'}
+                                                    onClick={() => handleStatusSubmit(product.productId , product.status)}
                                                 >
-                                                    {product.status}
+                                                    {product.status === "off" ? "上架" : "下架"}
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
@@ -306,9 +311,11 @@ export default function AdminMember() {
                                 >
                                     上一頁
                                 </Button>
+                                <span>{currentPage}/{totalPages}</span>
                                 <Button
                                     sx={{
                                         py: 1,
+                                        marginLeft: 1,
                                     }}
                                     variant="outlined"
                                     color="primary"
@@ -316,7 +323,6 @@ export default function AdminMember() {
                                 >
                                     下一頁
                                 </Button>
-                                {/* flexGrow可以調整間距 */}
                                 <Box sx={{ flexGrow: 1 }} />
                                 <Button
                                     sx={{
@@ -327,7 +333,7 @@ export default function AdminMember() {
                                     color="primary"
                                     onClick={handleSubmit}
                                 >
-                                    商品上架
+                                    新增商品
                                 </Button>
                             </Toolbar>
                         </Typography>

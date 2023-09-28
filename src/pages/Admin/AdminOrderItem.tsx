@@ -38,7 +38,7 @@ export default function OrderCheck2() {
         console.log("id", id)
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://localhost:44373/orders/orderid` + id, {
+                const response = await fetch(`https://localhost:44373/orders/Adminorderid` + id, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,

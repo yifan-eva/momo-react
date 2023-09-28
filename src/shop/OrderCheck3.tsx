@@ -14,12 +14,12 @@ export default function OrderCheck2() {
     const userId = localStorage.getItem("userId")
     const token = localStorage.getItem("token")
     interface OrderItem {
-        orderId: string,
-        orderItemId: string,
+        // orderId: string,
+        // orderItemId: string,
         productName: string,
         price: string,
         quantity: string,
-        userId: string,
+        // userId: string,
     }
     const handleBackClick = () => {
         navigate(`/OrderCheck2?userid=${userId}`); 
@@ -62,7 +62,7 @@ export default function OrderCheck2() {
 
 
     return (
-        <Container component="main" sx={{ py: 8, width: '600px' }} maxWidth="md">
+        <Container component="main" sx={{ py: 12, width: '600px' }} maxWidth="md">
             <Grid container spacing={8}>
                 <Box
                     sx={{

@@ -6,7 +6,6 @@ import { styled, alpha } from '@mui/material/styles';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import SearchIcon from '@mui/icons-material/Search';
 
-
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -59,6 +58,7 @@ export default function OrderCheck2() {
     const ordersPerPage = 10;
     const startIndex = (currentPage - 1) * ordersPerPage;
     const endIndex = startIndex + ordersPerPage;
+    //silce(開始位置,結束位置)
     const ordersToDisplay = orderItems.slice(startIndex, endIndex);
     const totalPages = Math.ceil(orderItems.length / ordersPerPage);
 
@@ -85,8 +85,13 @@ export default function OrderCheck2() {
         }
     };
     const handleBackClick = (id: string) => {
-        navigate(`/OrderCheck3?orderid=` + id); // 导航到指定的路由
+        navigate(`/OrderCheck3?orderid=` + id);
     };
+
+    useEffect(() => {
+        // 初始化 orderItems，顯示所有訂單
+        setOrderItems(orders);
+    }, [orders]);
 
     const handleSearch = () => {
         // 使用filter方法篩選符合搜索條件的訂單
@@ -109,10 +114,6 @@ export default function OrderCheck2() {
         handleSearch();
     }, [searchTerm]);
 
-    useEffect(() => {
-        // 初始化 orderItems，顯示所有訂單
-        setOrderItems(orders);
-    }, [orders]);
     //判斷是否登入
     useEffect(() => {
         if (!userId) {
@@ -124,9 +125,6 @@ export default function OrderCheck2() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userId = localStorage.getItem("userId");
-                console.log(userId);
-
                 const response = await fetch(`https://localhost:44373/orders/userid`, {
                     method: 'POST',
                     headers: {
@@ -135,7 +133,7 @@ export default function OrderCheck2() {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('連接失敗');
                 }
                 const data = await response.json();
                 // 依照orderId降冪排列
@@ -264,9 +262,11 @@ export default function OrderCheck2() {
                             >
                                 上一頁
                             </Button>
+                            <span>{currentPage}/{totalPages}</span>
                             <Button
                                 sx={{
                                     py: 1,
+                                    marginLeft: 1,
                                 }}
                                 variant="outlined"
                                 color="primary"

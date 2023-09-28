@@ -103,7 +103,7 @@ export default function ProductCard() {
           setSnackbarOpen(true);
         }
       } else {
-        alert('請先登錄以添加產品到購物車。');
+        alert('請先登入');
         navigate('/login');
       }
     } catch (error: any) {
@@ -190,9 +190,11 @@ export default function ProductCard() {
         >
           上一頁
         </Button>
+        <span>{currentPage}/{totalPages}</span>
         <Button
           sx={{
             py: 1,
+            marginLeft: 1,
           }}
           variant="outlined"
           color="primary"
