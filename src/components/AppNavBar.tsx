@@ -23,7 +23,7 @@ export default function AppNavBar() {
                 setAllCategories(data);
             })
             .catch(error => {
-                console.error('發稱錯誤:', error);
+                console.error('發生錯誤:', error);
             });
     }, []);
     console.log("p", allCategories)
@@ -55,8 +55,7 @@ export default function AppNavBar() {
                                 <Link href={`/Demo/ProductCategory?categoryId=${category.categoryId}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', padding: '2px' }}>
                                         <div style={{ marginRight: '8px' }}>
-                                            <CategoryIcon/>
-                                            {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
+                                            <CategoryIcon/>                                            
                                         </div>
                                         <div>{category.categoryName}</div>
                                     </div>
