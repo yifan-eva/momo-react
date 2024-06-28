@@ -2,11 +2,8 @@ import Button from '@mui/joy/Button';
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import { useEffect, useState } from 'react';
-import { Container, Snackbar, createTheme } from '@mui/material';
+import { Container, Snackbar } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Select, { selectClasses } from '@mui/joy/Select';
-import Option from '@mui/joy/Option';
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -50,7 +47,6 @@ export default function ProductCard() {
                         'Authorization': `Bearer ${token}`, 
                       },
                 });
-                // if (respnse.ok) {
                 if (response.ok) {
                     setSnackbarMessage(`成功將 ${product.productName} 添加到購物車`);
                     setSnackbarOpen(true);

@@ -198,7 +198,7 @@ export default function OrderCheck1() {
                                     {item.productName}
                                     <br />
                                     <Typography variant="body2" color="textSecondary">
-                                        {item.productPrice.toFixed(2)}
+                                        {item.productPrice}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -206,7 +206,7 @@ export default function OrderCheck1() {
                                     <br />
                                 </TableCell>
                                 <TableCell className="text-end">
-                                    {(item.productPrice * item.quantity).toFixed(2)}
+                                    {(item.productPrice * item.quantity)}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -215,7 +215,7 @@ export default function OrderCheck1() {
                         <TableRow>
                             <TableCell colSpan={4} sx={{ textAlign: 'right', fontSize: '16px' }}>
                                 總金額 NT$
-                                {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0).toFixed(2)}
+                                {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0)}
                             </TableCell>
                         </TableRow>
                     </TableFooter>

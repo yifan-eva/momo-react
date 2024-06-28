@@ -87,7 +87,6 @@ export default function AdminLogin() {
       const form = new FormData();
       form.append('AdminId', formData.UserId);
       form.append('AdminPwd', formData.UserPwd);
-      // form.append('Token', formData.token);
       try {
         const response = await fetch('https://localhost:44373/Admin/Login', {
           method: 'POST',
@@ -115,7 +114,6 @@ export default function AdminLogin() {
         }
       } catch (error) {
         console.error('發生錯誤', error);
-        // navigate("/Authorization")
       }
     }
   };

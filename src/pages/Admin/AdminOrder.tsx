@@ -106,11 +106,6 @@ export default function AdminMember() {
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
-            // 檢查ID是否有效
-            // if (!orderId || orderId === '0') {
-            //     console.error('沒有此訂單:', orderId);
-            //     return;
-            // }
             // 把要傳送的訊息封裝起來
             const data = {
                 orderId: orderId,
@@ -121,7 +116,7 @@ export default function AdminMember() {
             const confirmed = window.confirm(`確定要將訂單狀態設為 ${newStatus} 嗎？`);
 
             if (!confirmed) {
-                return; // 如果用戶取消操作，不執行後續代碼
+                return; 
             }
 
             const response = await fetch('https://localhost:44373/orders/OrderStatus', {

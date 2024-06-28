@@ -89,7 +89,6 @@ export default function Login() {
       const form = new FormData();
       form.append('UserId', formData.UserId);
       form.append('UserPwd', formData.UserPwd);
-      // form.append('Token', formData.token);
       try {
         const response = await fetch('https://localhost:44373/MemberLogin', {
           method: 'POST',
@@ -179,10 +178,6 @@ export default function Login() {
             {formErrors.UserPwd}
           </Typography>
           <br />
-          {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="記得我"
-          /> */}
           <Button
             type="submit"
             fullWidth
@@ -192,11 +187,6 @@ export default function Login() {
             登入
           </Button>
           <Grid container>
-            {/* <Grid item xs>
-              <Link href="#" variant="body2">
-                忘記密碼?
-              </Link>
-            </Grid> */}
             <Grid item>
               <Link href="/Demo/Create" variant="body2">
                 {"沒有帳號嗎?那快來註冊吧!"}

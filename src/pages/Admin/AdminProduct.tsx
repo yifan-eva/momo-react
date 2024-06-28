@@ -68,7 +68,6 @@ export default function AdminMember() {
     const [searchTerm, setSearchTerm] = useState('')
     const [productItems, setProductItems] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const productsPerPage = 10;
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
@@ -86,19 +85,6 @@ export default function AdminMember() {
             setCurrentPage(currentPage - 1);
         }
     };
-
-    const handleUpdateDialogOpen = () => {
-        setOpenUpdateDialog(true);
-        navigate('/AdminProductUpdate')
-    };
-
-    const handleUpdateDialogClose = () => {
-        setOpenUpdateDialog(false);
-    };
-
-    const handleupdateSubmit = () => {
-
-    }
 
     const handleSearch = () => {
         // 使用filter方法篩選符合搜索條件的訂單

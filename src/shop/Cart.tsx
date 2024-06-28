@@ -175,7 +175,7 @@ export default function Cart() {
                                         <br />
                                         <Typography variant="body2" color="textSecondary">
                                             NT$
-                                            {item.productPrice.toFixed(2)}
+                                            {item.productPrice}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
@@ -192,7 +192,7 @@ export default function Cart() {
                                     </TableCell>
                                     <TableCell className="text-end">
                                         NT$
-                                        {(item.productPrice * item.quantity).toFixed(2)}
+                                        {(item.productPrice * item.quantity)}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -206,7 +206,7 @@ export default function Cart() {
                                 </TableCell>
                                 <TableCell colSpan={2} sx={{ textAlign: 'right', fontSize: '18px' }}>
                                     總金額 NT$
-                                    {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0).toFixed(2)}
+                                    {cartData.reduce((total, item) => total + item.productPrice * item.quantity, 0)}
                                 </TableCell>
                                 <TableCell colSpan={1}>
                                     <Button variant="contained" color="primary" onClick={handleShopClick} >

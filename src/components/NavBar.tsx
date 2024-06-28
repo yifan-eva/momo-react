@@ -37,7 +37,6 @@ export default function Navbar({ children }: { children: ReactNode }) {
                 vertical: 'top',
                 horizontal: 'right',
             }}
-            // id={menuId}
             keepMounted
             transformOrigin={{
                 vertical: 'top',
@@ -83,7 +82,6 @@ export default function Navbar({ children }: { children: ReactNode }) {
                             aria-label="cart"
                             color="inherit"
                             aria-haspopup="true"
-                            // aria-controls={menuId}
                             onClick={handleAdminProfileMenuOpen}
                         >
                             <ManageAccountsIcon />

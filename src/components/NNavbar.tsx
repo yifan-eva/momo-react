@@ -26,7 +26,6 @@ export default function NNavbar() {
     const [open, setOpen] = React.useState(false);
     //左邊欄位打開的功能
     const theme = useTheme();
-    // const [expanded, setExpanded] = React.useState<string | false>(false);
     //左邊欄位功能
     const drawerWidth = 240;
     interface AppBarProps extends MuiAppBarProps {
@@ -85,14 +84,9 @@ export default function NNavbar() {
     //會員下拉
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
-    // const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-    // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
 
-    // const handleAdminMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    //     setAdminMenuAnchorEl(event.currentTarget);
-    // };
     const handleProfileMenuOpen = () => {
         setIsMenuOpen(true);
     };
@@ -103,12 +97,6 @@ export default function NNavbar() {
     const handleCartClick = () => {
         navigate(`/cart?userId=${userId}`);
     };
-    // const handleMobileMenuClose = () => {
-    //     setMobileMoreAnchorEl(null);
-    // };
-    // const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    //     setMobileMoreAnchorEl(event.currentTarget);
-    // };
 
     const handleLoggout = () => {
         alert('帳號已登出，跳回首頁')
@@ -163,38 +151,6 @@ export default function NNavbar() {
                 )]}
         </Menu>
     );
-
-    // const mobileMenuId = 'primary-search-account-menu-mobile';
-    // const renderMobileMenu = (
-    //     <Menu
-    //         anchorEl={mobileMoreAnchorEl}
-    //         anchorOrigin={{
-    //             vertical: 'top',
-    //             horizontal: 'right',
-    //         }}
-    //         id={mobileMenuId}
-    //         keepMounted
-    //         transformOrigin={{
-    //             vertical: 'top',
-    //             horizontal: 'right',
-    //         }}
-    //         open={isMobileMenuOpen}
-    //         onClose={handleMobileMenuClose}
-    //     >
-    //         <MenuItem onClick={handleProfileMenuOpen}>
-    //             <IconButton
-    //                 size="large"
-    //                 aria-label="account of current user"
-    //                 aria-controls="primary-search-account-menu"
-    //                 aria-haspopup="true"
-    //                 color="inherit"
-    //             >
-    //                 <AccountCircle />
-    //             </IconButton>
-    //             <p>Profile</p>
-    //         </MenuItem>
-    //     </Menu>
-    // );
 
     return (
         <Box sx={{ flexGrow: 1, display: 'flex' }}>
@@ -262,19 +218,6 @@ export default function NNavbar() {
                             </IconButton>
                         )}
                     </Box>
-                    {/* {renderMobileMenu} */}
-                    {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </Box> */}
                 </Toolbar>
             </AppBar>
             <Drawer
